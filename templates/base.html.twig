@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}MGorski.dev{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('/favicon/favicon-16x16.png') }}">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('main') }}
+    {% endblock %}
+</head>
+<body>
+
+<main class="container">
+    {% block body %}{% endblock %}
+</main>
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    {{ encore_entry_script_tags('main') }}
+{% endblock %}
+</body>
+</html>
