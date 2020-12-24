@@ -1,2 +1,6 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    globals:
+        email: '%env(MY_EMAIL)%'
+        repo: '%env(MY_REPOSITORY)%'
+        created_by: '%env(CREATED_BY)%'

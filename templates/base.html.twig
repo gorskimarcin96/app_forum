@@ -10,11 +10,13 @@
         {{ encore_entry_link_tags('main') }}
     {% endblock %}
 </head>
-<body>
+<body class="overflow-hidden">
 
-<main class="container">
+{% include 'header.html.twig' %}
+<main class="main-body container-xl">
     {% block body %}{% endblock %}
 </main>
+{% include 'footer.html.twig' %}
 
 {% block javascripts %}
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>

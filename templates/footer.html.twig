@@ -1,0 +1,31 @@
+<footer class="p-2">
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-6">
+                <section>
+                    {% if email %}
+                        <b>Contact:</b>
+                        <div class="pt-3">
+                            Address e-mail: <a href="mailto:{{email}}">{{email}}</a>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+            <div class="col-6 d-flex justify-content-end icons">
+                {% if repo %}
+                    <a class="icon mx-1 display-5" target="_blank" href="{{ repo }}">
+                        <i class="fab fa-github"></i>
+                    </a>
+                {% endif %}
+                <a class="icon display-5" href="/">
+                    <i class="fa fa-home"></i>
+                </a>
+            </div>
+            {% if created_by %}
+                <div class="col-12 text-right border-top border-light small">
+                    Created by: <a href="https://{{ created_by }}">{{ created_by }}</a>.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,36 @@
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+    {% set navigation = [
+        {route:'app_logout',name:'Logout'},
+    ] %}
+{% else %}
+    {% set navigation = [
+        {route:'app_login',name:'Login'},
+        {route:'app_register',name:'Register'}
+    ] %}
+{% endif %}
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-dark sticky-top">
+        <a class="navbar-brand" href="{{ url('homepage') }}"><i class="fa fa-home"></i></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                {% for nav in navigation %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') == nav.route?'active' }}"
+                           href="{{ url(nav.route) }}">{{ nav.name }}</a>
+                    </li>
+                {% endfor %}
+                <li></li>
+            </ul>
+
+            <div id="timer" class="badge badge-dark d-sm-inline-block d-none">
+                <timer/>
+            </div>
+        </div>
+    </nav>
+</header>

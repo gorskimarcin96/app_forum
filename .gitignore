@@ -2,6 +2,7 @@
 .idea
 .env
 *.lock
+*-lock.json
 ###<my
 
 ###> symfony/framework-bundle ###
