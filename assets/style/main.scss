@@ -13,7 +13,8 @@ $color-main: $white;
 $background: $black;
 $backgroundBody: #22262a;
 $theme-colors: (
-        'main': $main
+        'main': $main,
+        'tertiary': $background
 );
 $link-color: $primary;
 $link-hover-color: $white;
@@ -67,7 +68,7 @@ body > main {
   border-radius: 25px;
 }
 
-//homepage
+//forum
 .inner-main,
 .inner-sidebar {
   position: absolute;

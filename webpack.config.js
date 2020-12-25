@@ -8,6 +8,8 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .addEntry('main', './assets/js/main.js')
+    .addEntry('post_add', './assets/js/post_add.js')
+    .addEntry('post_page', './assets/js/post_page.js')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()

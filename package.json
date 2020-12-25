@@ -5,6 +5,7 @@
         "@symfony/webpack-encore": "^0.32.0",
         "axios": "^0.21.0",
         "bootstrap": "^4.5.3",
+        "bootstrap-vue": "^2.21.1",
         "core-js": "^3.0.0",
         "jquery": "^3.5.1",
         "node-sass": "^4.0.0",
@@ -12,7 +13,7 @@
         "regenerator-runtime": "^0.13.2",
         "sass-loader": "^9.0.1",
         "stimulus": "^2.0.0",
-        "vue": "^2.6.11",
+        "vue": "^2.6.12",
         "vue-loader": "^15.0.11",
         "vue-template-compiler": "^2.6.11",
         "webpack-notifier": "^1.6.0"

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block body %}
+    <div class="inner-wrapper">
+        <div class="inner-sidebar bg-main">
+            <div class="inner-sidebar-header">
+                <div id="post_add">
+                    <post_add/>
+                </div>
+            </div>
+
+            <div class="inner-sidebar-body p-3">
+                <nav class="nav nav-pills flex-column">
+                    <a href="#" class="nav-link active">All Threads</a>
+                    <a href="#" class="nav-link">Popular this week</a>
+                    <a href="#" class="nav-link">Popular all time</a>
+                    <a href="#" class="nav-link">Solved</a>
+                    <a href="#" class="nav-link">Unsolved</a>
+                    <a href="#" class="nav-link">No replies yet</a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="inner-main">
+            <div class="inner-main-header bg-main">
+                <select class="form-control w-auto mr-1">
+                    <option selected="">Latest</option>
+                    <option value="1">Popular</option>
+                    <option value="3">Solved</option>
+                    <option value="3">Unsolved</option>
+                    <option value="3">No Replies Yet</option>
+                </select>
+                <span class="ml-auto">
+                    <input type="text" class="form-control my-4" placeholder="Search forum"/>
+                </span>
+            </div>
+
+            <div class="inner-main-body p-2 p-sm-3 collapse forum-content show">
+                <div id="post_page">
+                    <post_page/>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('post_page') }}
+    {{ encore_entry_script_tags('post_add') }}
+{% endblock %}
