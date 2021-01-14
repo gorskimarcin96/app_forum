@@ -6,20 +6,27 @@
                     {% if email %}
                         <b>Contact:</b>
                         <div class="pt-3">
-                            Address e-mail: <a href="mailto:{{email}}">{{email}}</a>
+                            Address e-mail: <a href="mailto:{{ email }}">{{ email }}</a>
                         </div>
                     {% endif %}
                 </section>
             </div>
-            <div class="col-6 d-flex justify-content-end icons">
-                {% if repo %}
-                    <a class="icon mx-1 display-5" target="_blank" href="{{ repo }}">
-                        <i class="fab fa-github"></i>
-                    </a>
-                {% endif %}
-                <a class="icon display-5" href="/">
-                    <i class="fa fa-home"></i>
-                </a>
+            <div class="col-6">
+                <b>Technologies used:</b>
+                <div>
+                    <a class="icon display-5" href="http://github.com/" target="_blank">
+                        <i class="fab fa-github"></i></a>
+                    <a class="icon display-5" href="https://symfony.com/" target="_blank">
+                        <i class="fab fa-symfony"></i></a>
+                    <a class="icon display-5" href="https://jquery.com/" target="_blank">
+                        {% include 'icons/jquery.svg' %}</a>
+                    <a class="icon display-5" href="https://sass-lang.com/" target="_blank">
+                        <i class="fab fa-sass"></i></a>
+                    <a class="icon display-5" href="https://getbootstrap.com/" target="_blank">
+                        <i class="fab fa-bootstrap"></i></a>
+                    <a class="icon display-5" href="https://vuejs.org/" target="_blank">
+                        <i class="fab fa-vuejs"></i></a>
+                </div>
             </div>
             {% if created_by %}
                 <div class="col-12 text-right border-top border-light small">

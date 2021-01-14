@@ -14,20 +14,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PostRepository extends ServiceEntityRepository
 {
+    public const ORDER_BY_TYPES = [
+        'latest', 'popular', //'solved', 'unsolved', 'no replies yet'
+    ];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
     }
 
     /**
-     * @param $page
+     * @param int $page
      * @param int $limit
+     * @param string $type
      * @return int|mixed|string
      */
-    public function page($page, $limit = 10)
+    public function page(int $page, int $limit = 10, string $type = 'latest')
     {
-        return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt', 'DESC')
+        $query = $this->createQueryBuilder('p');
+
+        switch ($type) {
+            case self::ORDER_BY_TYPES[1]:
+                $query->orderBy('p.numberEntries', 'DESC');
+                break;
+            case self::ORDER_BY_TYPES[0]:
+            default:
+                $query->orderBy('p.createdAt', 'DESC');
+                break;
+        }
+
+        return $query
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->getQuery()

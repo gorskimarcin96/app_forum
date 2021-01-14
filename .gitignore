@@ -3,6 +3,7 @@
 .env
 *.lock
 *-lock.json
+/public/upload
 ###<my
 
 ###> symfony/framework-bundle ###

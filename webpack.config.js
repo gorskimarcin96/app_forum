@@ -10,6 +10,7 @@ Encore
     .addEntry('main', './assets/js/main.js')
     .addEntry('post_add', './assets/js/post_add.js')
     .addEntry('post_page', './assets/js/post_page.js')
+    .addEntry('post_post', './assets/js/post_post.js')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()

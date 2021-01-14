@@ -68,12 +68,18 @@ class Post
      */
     private $postFiles;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PostComment::class, mappedBy="post")
+     */
+    private $postComments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->tag = new ArrayCollection();
         $this->postFiles = new ArrayCollection();
+        $this->postComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,6 +207,36 @@ class Post
             // set the owning side to null (unless already changed)
             if ($postFile->getPost() === $this) {
                 $postFile->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PostComment[]
+     */
+    public function getPostComments(): Collection
+    {
+        return $this->postComments;
+    }
+
+    public function addPostComment(PostComment $postComment): self
+    {
+        if (!$this->postComments->contains($postComment)) {
+            $this->postComments[] = $postComment;
+            $postComment->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostComment(PostComment $postComment): self
+    {
+        if ($this->postComments->removeElement($postComment)) {
+            // set the owning side to null (unless already changed)
+            if ($postComment->getPost() === $this) {
+                $postComment->setPost(null);
             }
         }
 

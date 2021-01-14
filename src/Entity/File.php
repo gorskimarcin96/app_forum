@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="type", type="string")
- * @DiscriminatorMap({"postFile" = "PostFile"})
+ * @DiscriminatorMap({"postFile"="PostFile", "postCommentFile"="PostCommentFile"})
  * @ORM\HasLifecycleCallbacks()
  */
 abstract class File
