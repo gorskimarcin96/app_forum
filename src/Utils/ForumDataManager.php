@@ -1,28 +1,24 @@
 <?php
 
-
 namespace App\Utils;
 
-
-use App\Entity\Post;
-use App\Entity\PostComment;
-use App\Entity\PostCommentFile;
-use App\Entity\PostFile;
-use App\Entity\User;
+use App\Document\Post;
+use App\Document\PostComment;
+use App\Document\PostCommentFile;
+use App\Document\PostFile;
+use App\Document\User;
 use App\Repository\TagRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ForumDataManager
 {
     /**
-     * @var EntityManagerInterface
+     * @var DocumentManager
      */
-    private $em;
+    private $dm;
     /**
      * @var SerializerInterface
      */
@@ -38,19 +34,19 @@ class ForumDataManager
 
     /**
      * ForumDataManager constructor.
-     * @param EntityManagerInterface $entityManager
+     * @param DocumentManager $documentManager
      * @param SerializerInterface $serializer
      * @param FileDataManager $fileDataManager
      * @param TagRepository $tagRepository
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
+        DocumentManager $documentManager,
         SerializerInterface $serializer,
         FileDataManager $fileDataManager,
         TagRepository $tagRepository
     )
     {
-        $this->em = $entityManager;
+        $this->dm = $documentManager;
         $this->serializer = $serializer;
         $this->fileDataManager = $fileDataManager;
         $this->tagR = $tagRepository;
@@ -62,10 +58,8 @@ class ForumDataManager
      * @param array $tags
      * @param array $files
      * @return Post
-     * @throws NonUniqueResultException
-     * @throws ORMException
-     * @throws OptimisticLockException
      * @throws ExceptionInterface
+     * @throws MongoDBException
      */
     public function postCreate(array $post, User $user, $tags = [], $files = []): Post
     {
@@ -75,16 +69,16 @@ class ForumDataManager
         foreach ($tags as $tag) {
             $post->addTag($this->tagR->findOrCreate($tag));
         }
-        $this->em->persist($post);
 
-        if ($files) {
+        $this->dm->persist($post);
+        if($files) {
             foreach ($files as $file) {
                 $postFile = $this->fileDataManager->upload($file, PostFile::class);
                 $post->addPostFile($postFile);
             }
         }
-        $this->em->persist($post);
-        $this->em->flush();
+        $this->dm->persist($post);
+        $this->dm->flush();
 
         return $post;
     }
@@ -95,25 +89,26 @@ class ForumDataManager
      * @param array $files
      * @return PostComment
      * @throws ExceptionInterface
+     * @throws MongoDBException
      */
     public function postCommentCreate(array $postComment, User $user, $files = []): PostComment
     {
-        $post = $this->em->getRepository(Post::class)->find($postComment['post']);
+        $post = $this->dm->getRepository(Post::class)->find($postComment['post']);
 
         /** @var PostComment $postComment */
         $postComment = $this->serializer->denormalize($postComment, PostComment::class);
         $postComment->setUser($user);
         $postComment->setPost($post);
 
-        $this->em->persist($postComment);
+        $this->dm->persist($postComment);
         if ($files) {
             foreach ($files as $file) {
                 $postCommentFile = $this->fileDataManager->upload($file, PostCommentFile::class);
                 $postComment->addPostCommentFile($postCommentFile);
             }
         }
-        $this->em->persist($postComment);
-        $this->em->flush();
+        $this->dm->persist($postComment);
+        $this->dm->flush();
 
         return $postComment;
     }

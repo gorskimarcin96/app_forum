@@ -1,97 +1,112 @@
 <?php
 
-namespace App\Entity;
+namespace App\Document;
 
 use App\Repository\PostRepository;
+use App\Utils\DateManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Id;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceOne;
+use MongoDB\BSON\Timestamp;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity(repositoryClass=PostRepository::class)
+ * @Document(repositoryClass=PostRepository::class)
  */
 class Post
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @Id
      * @Groups({"post"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Field(type="string")
      * @Groups({"post"})
      */
     private $title;
 
     /**
-     * @ORM\Column(type="text")
+     * @Field(type="string")
      * @Groups({"post"})
      */
     private $description;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @Field(type="int")
      * @Groups({"post"})
      */
     private $numberEntries = 0;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="posts")
+     * @ReferenceOne(targetDocument=User::class)
      * @Groups({"user"})
      */
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="posts")
-     * @Groups({"post"})
+     * @ReferenceMany(targetDocument=Tag::class)
      */
     private $tag;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @Groups({"post"})
+     * @Field(type="timestamp")
      */
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @Field(type="timestamp")
      */
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=PostFile::class, mappedBy="post")
+     * @ReferenceMany(targetDocument=PostFile::class, mappedBy="post")
      * @Groups({"file"})
      */
     private $postFiles;
 
     /**
-     * @ORM\OneToMany(targetEntity=PostComment::class, mappedBy="post")
+     * @ReferenceMany(targetDocument=PostComment::class, mappedBy="post")
      */
     private $postComments;
 
+    /**
+     * Post constructor.
+     */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new Timestamp(0, 0);
+        $this->updatedAt = new Timestamp(0, 0);
         $this->tag = new ArrayCollection();
         $this->postFiles = new ArrayCollection();
         $this->postComments = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    /**
+     * @return string
+     */
+    public function getId(): string
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -99,11 +114,18 @@ class Post
         return $this;
     }
 
-    public function getNumberEntries()
+    /**
+     * @return int
+     */
+    public function getNumberEntries(): int
     {
         return $this->numberEntries;
     }
 
+    /**
+     * @param $numberEntries
+     * @return $this
+     */
     public function setNumberEntries($numberEntries): self
     {
         $this->numberEntries = $numberEntries;
@@ -111,11 +133,18 @@ class Post
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     * @return $this
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -123,11 +152,18 @@ class Post
         return $this;
     }
 
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
+    /**
+     * @param User|null $user
+     * @return $this
+     */
     public function setUser(?User $user): self
     {
         $this->user = $user;
@@ -135,24 +171,38 @@ class Post
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    /**
+     * @return Timestamp|null
+     */
+    public function getCreatedAt(): ?Timestamp
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /**
+     * @param Timestamp $createdAt
+     * @return $this
+     */
+    public function setCreatedAt(Timestamp $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    /**
+     * @return Timestamp|null
+     */
+    public function getUpdatedAt(): ?Timestamp
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    /**
+     * @param Timestamp $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(Timestamp $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -160,13 +210,17 @@ class Post
     }
 
     /**
-     * @return Collection|Tag[]
+     * @return Collection
      */
     public function getTag(): Collection
     {
         return $this->tag;
     }
 
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
     public function addTag(Tag $tag): self
     {
         if (!$this->tag->contains($tag)) {
@@ -176,6 +230,10 @@ class Post
         return $this;
     }
 
+    /**
+     * @param Tag $tag
+     * @return $this
+     */
     public function removeTag(Tag $tag): self
     {
         $this->tag->removeElement($tag);
@@ -191,6 +249,10 @@ class Post
         return $this->postFiles;
     }
 
+    /**
+     * @param PostFile $postFile
+     * @return $this
+     */
     public function addPostFile(PostFile $postFile): self
     {
         if (!$this->postFiles->contains($postFile)) {
@@ -201,13 +263,14 @@ class Post
         return $this;
     }
 
+    /**
+     * @param PostFile $postFile
+     * @return $this
+     */
     public function removePostFile(PostFile $postFile): self
     {
-        if ($this->postFiles->removeElement($postFile)) {
-            // set the owning side to null (unless already changed)
-            if ($postFile->getPost() === $this) {
-                $postFile->setPost(null);
-            }
+        if ($this->postFiles->removeElement($postFile) && $postFile->getPost() === $this) {
+            $postFile->setPost(null);
         }
 
         return $this;
@@ -221,6 +284,10 @@ class Post
         return $this->postComments;
     }
 
+    /**
+     * @param PostComment $postComment
+     * @return $this
+     */
     public function addPostComment(PostComment $postComment): self
     {
         if (!$this->postComments->contains($postComment)) {
@@ -231,15 +298,50 @@ class Post
         return $this;
     }
 
+    /**
+     * @param PostComment $postComment
+     * @return $this
+     */
     public function removePostComment(PostComment $postComment): self
     {
-        if ($this->postComments->removeElement($postComment)) {
-            // set the owning side to null (unless already changed)
-            if ($postComment->getPost() === $this) {
-                $postComment->setPost(null);
-            }
+        if ($this->postComments->removeElement($postComment) && $postComment->getPost() === $this) {
+            $postComment->setPost(null);
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     * @Groups({"post"})
+     */
+    public function getArrayTag(): array
+    {
+        foreach ($this->tag->toArray() as $key => $tag) {
+            $data[] = [
+                'id' => $tag->getId(),
+                'name' => $tag->getName()
+            ];
+        }
+
+        return $data ?? [];
+    }
+
+    /**
+     * @return string
+     * @Groups({"post"})
+     */
+    public function getFormatCreatedAt(): string
+    {
+        return date(DateManager::DATETIME_FORMAT, $this->getCreatedAt()->getTimestamp());
+    }
+
+    /**
+     * @return int
+     * @Groups({"post"})
+     */
+    public function getCountComment(): int
+    {
+        return $this->getPostComments()->count();
     }
 }

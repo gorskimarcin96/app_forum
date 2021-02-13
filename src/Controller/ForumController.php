@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Post;
+use App\Repository\PostRepository;
+use Doctrine\ODM\MongoDB\LockException;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,13 +24,16 @@ class ForumController extends AbstractController
 
     /**
      * @Route("/post/{post}", name="post", options={"expose"=true})
-     * @param Post $post
+     * @param string $post
+     * @param PostRepository $postRepository
      * @return Response
+     * @throws LockException
+     * @throws MappingException
      */
-    public function post(Post $post): Response
+    public function post(string $post, PostRepository $postRepository): Response
     {
         return $this->render('forum/post.html.twig', [
-            'post' => $post
+            'post' => $postRepository->find($post)
         ]);
     }
 }

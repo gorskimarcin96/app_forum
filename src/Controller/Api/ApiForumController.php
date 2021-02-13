@@ -2,13 +2,14 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Post;
+use App\Document\Post;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Utils\ForumDataManager;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\LockException;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,10 +31,8 @@ class ApiForumController extends AbstractController
      * @param SerializerInterface $serializer
      * @param ForumDataManager $manager
      * @return JsonResponse
-     * @throws NonUniqueResultException
-     * @throws ORMException
-     * @throws OptimisticLockException
      * @throws ExceptionInterface
+     * @throws MongoDBException
      */
     public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
     {
@@ -55,8 +54,13 @@ class ApiForumController extends AbstractController
      * @param ForumDataManager $manager
      * @return JsonResponse
      * @throws ExceptionInterface
+     * @throws MongoDBException
      */
-    public function postCommentAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
+    public function postCommentAdd(
+        Request $request,
+        SerializerInterface $serializer,
+        ForumDataManager $manager
+    ): JsonResponse
     {
         $postComment = $manager->postCommentCreate(
             json_decode($request->get('postComment'), true),
@@ -69,16 +73,18 @@ class ApiForumController extends AbstractController
     }
 
     /**
-     * @Route("/post/{post}", name="post", methods={"GET"}, requirements={"post"="\d+"})
-     * @param Post $post
+     * @Route("/post/id/{post}", name="post", methods={"GET"})
+     * @param string $post
+     * @param DocumentManager $documentManager
      * @param SerializerInterface $serializer
      * @return JsonResponse
      */
-    public function post(Post $post, SerializerInterface $serializer): JsonResponse
+    public function post(string $post, DocumentManager $documentManager, SerializerInterface $serializer): JsonResponse
     {
+        $post = $documentManager->find(Post::class, $post);
         $json = $serializer->serialize($post, 'json', ['groups' => ['post', 'user', 'file']]);
 
-        return new JsonResponse($json, Response::HTTP_CREATED, [], true);
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -97,7 +103,12 @@ class ApiForumController extends AbstractController
      * @param PostRepository $postRepository
      * @return JsonResponse
      */
-    public function postGet(int $page, Request $request, SerializerInterface $serializer, PostRepository $postRepository): JsonResponse
+    public function postGet(
+        int $page,
+        Request $request,
+        SerializerInterface $serializer,
+        PostRepository $postRepository
+    ): JsonResponse
     {
         $data = $postRepository->page(
             $page,
@@ -111,17 +122,28 @@ class ApiForumController extends AbstractController
 
     /**
      * @Route("/post-comment/get/{post}/{page}", name="post_comment_get", methods={"GET"}, defaults={"page"=1})
-     * @param Post $post
+     * @param string $post
      * @param int $page
      * @param Request $request
      * @param SerializerInterface $serializer
      * @param PostCommentRepository $postCommentRepository
+     * @param PostRepository $postRepository
      * @return JsonResponse
+     * @throws LockException
+     * @throws MappingException
+     * @throws MongoDBException
      */
-    public function postCommentGet(Post $post, int $page, Request $request, SerializerInterface $serializer, PostCommentRepository $postCommentRepository): JsonResponse
+    public function postCommentGet(
+        string $post,
+        int $page,
+        Request $request,
+        SerializerInterface $serializer,
+        PostCommentRepository $postCommentRepository,
+        PostRepository $postRepository
+    ): JsonResponse
     {
         $data = $postCommentRepository->page(
-            $post,
+            $postRepository->find($post),
             $page,
             $request->get('limit', self::DEFAULT_LIMIT)
         );

@@ -1,78 +1,92 @@
 <?php
 
-namespace App\Entity;
+namespace App\Document;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\Index;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="`user`")
+ * @Document(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @MongoDB\Id
      * @Groups({"user"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @Field(type="string")
      * @Groups({"user"})
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     * @Index(unique=true, order="asc")
+
      */
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @Field(type="collection")
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @Field(type="string")
+     * @Assert\NotBlank()
      */
     private $password;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @Field(type="boolean")
      */
     private $isVerified = false;
 
     /**
-     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="user")
+     * @ReferenceMany(targetDocument=Post::class, mappedBy="user")
      */
     private $posts;
 
     /**
-     * @ORM\OneToMany(targetEntity=PostComment::class, mappedBy="User")
+     * User constructor.
      */
-    private $postComments;
-
     public function __construct()
     {
         $this->posts = new ArrayCollection();
-        $this->postComments = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    /**
+     * @return string
+     */
+    public function getId(): string
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     * @return $this
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -87,7 +101,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -102,6 +116,10 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array $roles
+     * @return $this
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -114,9 +132,13 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
+    /**
+     * @param string $password
+     * @return $this
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -127,15 +149,15 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -146,6 +168,10 @@ class User implements UserInterface
         return $this->isVerified;
     }
 
+    /**
+     * @param bool $isVerified
+     * @return $this
+     */
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
@@ -161,6 +187,10 @@ class User implements UserInterface
         return $this->posts;
     }
 
+    /**
+     * @param Post $post
+     * @return $this
+     */
     public function addPost(Post $post): self
     {
         if (!$this->posts->contains($post)) {
@@ -171,43 +201,14 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @param Post $post
+     * @return $this
+     */
     public function removePost(Post $post): self
     {
-        if ($this->posts->removeElement($post)) {
-            // set the owning side to null (unless already changed)
-            if ($post->getUser() === $this) {
-                $post->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PostComment[]
-     */
-    public function getPostComments(): Collection
-    {
-        return $this->postComments;
-    }
-
-    public function addPostComment(PostComment $postComment): self
-    {
-        if (!$this->postComments->contains($postComment)) {
-            $this->postComments[] = $postComment;
-            $postComment->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePostComment(PostComment $postComment): self
-    {
-        if ($this->postComments->removeElement($postComment)) {
-            // set the owning side to null (unless already changed)
-            if ($postComment->getUser() === $this) {
-                $postComment->setUser(null);
-            }
+        if ($this->posts->removeElement($post) && $post->getUser() === $this) {
+            $post->setUser(null);
         }
 
         return $this;

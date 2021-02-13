@@ -9,7 +9,7 @@
         </a>
       </div>
       <div class="col-md-10 col-8 text-justify">
-        <div class="text-right">{{ (new Date(postComment.createdAt)).toLocaleString() }}</div>
+        <div class="text-right">{{ postComment.formatCreatedAt }}</div>
         {{ postComment.description }}
         <lightbox :items="postComment.images" v-if="postComment.images && postComment.images.length"
                   v-bind:cells="postComment.images.length>=4?4:postComment.images.length"></lightbox>
@@ -27,7 +27,7 @@ export default {
       title: null,
       description: null,
       user: null,
-      createdAt: null,
+      formatCreatedAt: null,
       images: [],
     }
   }

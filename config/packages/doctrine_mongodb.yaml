@@ -1,0 +1,12 @@
+doctrine_mongodb:
+  connections:
+    default:
+      server: '%env(resolve:MONGODB_URL)%'
+  default_database: '%env(resolve:MONGODB_DATABASE)%'
+  document_managers:
+    default:
+      mappings:
+        custom_mapping:
+          type: annotation
+          dir: '%kernel.project_dir%/src/Document'
+          prefix: 'App\Document'

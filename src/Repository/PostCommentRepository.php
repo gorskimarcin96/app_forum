@@ -2,10 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
-use App\Entity\PostComment;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Document\Post;
+use App\Document\PostComment;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
+use Doctrine\ODM\MongoDB\MongoDBException;
+use MongoDB\DeleteResult;
+use MongoDB\InsertOneResult;
+use MongoDB\UpdateResult;
 
 /**
  * @method PostComment|null find($id, $lockMode = null, $lockVersion = null)
@@ -13,8 +18,12 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method PostComment[]    findAll()
  * @method PostComment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostCommentRepository extends ServiceEntityRepository
+class PostCommentRepository extends ServiceDocumentRepository
 {
+    /**
+     * PostCommentRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PostComment::class);
@@ -24,16 +33,16 @@ class PostCommentRepository extends ServiceEntityRepository
      * @param Post $post
      * @param int $page
      * @param int $limit
-     * @return int|mixed|string
+     * @return array|Iterator|int|DeleteResult|InsertOneResult|UpdateResult|object|null
+     * @throws MongoDBException
      */
     public function page(Post $post, int $page, int $limit)
     {
-        return $this->createQueryBuilder('p')
-            ->where('p.post = :post')
-            ->setParameter('post', $post)
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
+        return $this->createQueryBuilder()
+            ->field('post')->references($post)
+            ->skip(($page - 1) * $limit)
+            ->limit($limit)
             ->getQuery()
-            ->getResult();
+            ->execute();
     }
 }

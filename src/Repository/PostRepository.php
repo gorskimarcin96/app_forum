@@ -2,22 +2,20 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Document\Post;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 
-/**
- * @method Post|null find($id, $lockMode = null, $lockVersion = null)
- * @method Post|null findOneBy(array $criteria, array $orderBy = null)
- * @method Post[]    findAll()
- * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class PostRepository extends ServiceEntityRepository
+class PostRepository extends ServiceDocumentRepository
 {
     public const ORDER_BY_TYPES = [
         'latest', 'popular', //'solved', 'unsolved', 'no replies yet'
     ];
 
+    /**
+     * PostRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
@@ -31,22 +29,22 @@ class PostRepository extends ServiceEntityRepository
      */
     public function page(int $page, int $limit = 10, string $type = 'latest')
     {
-        $query = $this->createQueryBuilder('p');
+        $query = $this->createQueryBuilder();
 
         switch ($type) {
             case self::ORDER_BY_TYPES[1]:
-                $query->orderBy('p.numberEntries', 'DESC');
+                $query->sort('numberEntries', 'DESC');
                 break;
             case self::ORDER_BY_TYPES[0]:
             default:
-                $query->orderBy('p.createdAt', 'DESC');
+                $query->sort('createdAt', 'DESC');
                 break;
         }
 
         return $query
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
+            ->skip(($page - 1) * $limit)
+            ->limit($limit)
             ->getQuery()
-            ->getResult();
+            ->toArray();
     }
 }

@@ -2,11 +2,11 @@
   <div class="card bg-dark shadow mb-2" v-if="post.id !== null">
     <div class="card-header">
       <div class="row">
-        <div class="col-md-10 col-8 text-justify">
+        <div class="col-md-9 col-8 text-justify">
           <a v-bind:href="getRoutePost(post.id)">{{ post.title }}</a>
         </div>
-        <div class="col-md-2 col-4 text-right">
-          {{ (new Date(post.createdAt)).toLocaleString() }}
+        <div class="col-md-3 col-4 text-right">
+          {{ post.formatCreatedAt }}
         </div>
       </div>
     </div>
@@ -27,12 +27,12 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10 col-8">
-              <span v-for="(tag, index) in post.tag" class="badge mx-1"
+              <span v-for="(tag, index) in post.arrayTag" class="badge mx-1"
                     v-bind:class="{ 'badge-primary': index%2, 'badge-secondary': !(index%2) }">{{ tag.name }}</span>
         </div>
         <div class="col-md-2 col-4 text-right small">
           <div><i class="fas fa-eye"></i> {{ post.numberEntries }}</div>
-          <div><i class="fas fa-comment-alt"></i> {{ post.commentNumber }}</div>
+          <div><i class="fas fa-comment-alt"></i> {{ post.countComment }}</div>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ export default {
       images: [],
       tag: [],
       numberEntries: 0,
-      commentNumber: 0
+      countComment: 0
     }
   },
   methods: {

@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,15 +16,27 @@ class EmailVerifier
 {
     private $verifyEmailHelper;
     private $mailer;
-    private $entityManager;
+    private $documentManager;
 
-    public function __construct(VerifyEmailHelperInterface $helper, MailerInterface $mailer, EntityManagerInterface $manager)
+    /**
+     * EmailVerifier constructor.
+     * @param VerifyEmailHelperInterface $helper
+     * @param MailerInterface $mailer
+     * @param DocumentManager $manager
+     */
+    public function __construct(VerifyEmailHelperInterface $helper, MailerInterface $mailer, DocumentManager $manager)
     {
         $this->verifyEmailHelper = $helper;
         $this->mailer = $mailer;
-        $this->entityManager = $manager;
+        $this->documentManager = $manager;
     }
 
+    /**
+     * @param string $verifyEmailRouteName
+     * @param UserInterface $user
+     * @param TemplatedEmail $email
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
     public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
@@ -42,7 +56,10 @@ class EmailVerifier
     }
 
     /**
+     * @param Request $request
+     * @param UserInterface $user
      * @throws VerifyEmailExceptionInterface
+     * @throws MongoDBException
      */
     public function handleEmailConfirmation(Request $request, UserInterface $user): void
     {
@@ -50,7 +67,7 @@ class EmailVerifier
 
         $user->setIsVerified(true);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->documentManager->persist($user);
+        $this->documentManager->flush();
     }
 }
