@@ -3,4 +3,5 @@ framework:
         transports:
              async: '%env(MESSENGER_TRANSPORT_DSN)%'
         routing:
-            App\Message\GenerateUser: async
+            App\Message\GenerateUserJob: async
+            App\Message\GeneratePostJob: async

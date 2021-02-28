@@ -34,7 +34,7 @@ class ApiForumController extends AbstractController
      * @throws ExceptionInterface
      * @throws MongoDBException
      */
-    public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
+     public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
     {
         $post = $manager->postCreate(
             json_decode($request->get('post'), true),

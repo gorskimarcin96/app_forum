@@ -244,7 +244,7 @@ class Post
     /**
      * @return Collection|PostFile[]
      */
-    public function getPostFiles(): Collection
+    public function getFiles(): Collection
     {
         return $this->postFiles;
     }
@@ -253,7 +253,7 @@ class Post
      * @param PostFile $postFile
      * @return $this
      */
-    public function addPostFile(PostFile $postFile): self
+    public function addFile(PostFile $postFile): self
     {
         if (!$this->postFiles->contains($postFile)) {
             $this->postFiles[] = $postFile;
@@ -267,7 +267,7 @@ class Post
      * @param PostFile $postFile
      * @return $this
      */
-    public function removePostFile(PostFile $postFile): self
+    public function removeFile(PostFile $postFile): self
     {
         if ($this->postFiles->removeElement($postFile) && $postFile->getPost() === $this) {
             $postFile->setPost(null);

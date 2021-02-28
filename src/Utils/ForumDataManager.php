@@ -74,7 +74,7 @@ class ForumDataManager
         if($files) {
             foreach ($files as $file) {
                 $postFile = $this->fileDataManager->upload($file, PostFile::class);
-                $post->addPostFile($postFile);
+                $post->addFile($postFile);
             }
         }
         $this->dm->persist($post);
@@ -104,7 +104,7 @@ class ForumDataManager
         if ($files) {
             foreach ($files as $file) {
                 $postCommentFile = $this->fileDataManager->upload($file, PostCommentFile::class);
-                $postComment->addPostCommentFile($postCommentFile);
+                $postComment->addFile($postCommentFile);
             }
         }
         $this->dm->persist($postComment);

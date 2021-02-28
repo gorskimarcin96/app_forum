@@ -176,7 +176,7 @@ class PostComment
     /**
      * @return Collection
      */
-    public function getPostCommentFiles(): Collection
+    public function getFiles(): Collection
     {
         return $this->postCommentFiles;
     }
@@ -185,7 +185,7 @@ class PostComment
      * @param PostCommentFile $postCommentFile
      * @return $this
      */
-    public function addPostCommentFile(PostCommentFile $postCommentFile): self
+    public function addFile(PostCommentFile $postCommentFile): self
     {
         if (!$this->postCommentFiles->contains($postCommentFile)) {
             $this->postCommentFiles[] = $postCommentFile;
@@ -199,7 +199,7 @@ class PostComment
      * @param PostCommentFile $postCommentFile
      * @return $this
      */
-    public function removePostCommentFile(PostCommentFile $postCommentFile): self
+    public function removeFile(PostCommentFile $postCommentFile): self
     {
         if ($this->postCommentFiles->removeElement($postCommentFile) && $postCommentFile->getPostComment() === $this) {
             $postCommentFile->setPostComment(null);

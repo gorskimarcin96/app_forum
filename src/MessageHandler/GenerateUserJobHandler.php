@@ -3,13 +3,13 @@
 namespace App\MessageHandler;
 
 use App\Document\User;
-use App\Message\GenerateUser;
+use App\Message\GenerateUserJob;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-final class GenerateUserHandler implements MessageHandlerInterface
+final class GenerateUserJobHandler implements MessageHandlerInterface
 {
     /**
      * @var DocumentManager
@@ -32,10 +32,10 @@ final class GenerateUserHandler implements MessageHandlerInterface
     }
 
     /**
-     * @param GenerateUser $message
+     * @param GenerateUserJob $message
      * @throws MongoDBException
      */
-    public function __invoke(GenerateUser $message)
+    public function __invoke(GenerateUserJob $message)
     {
         foreach (range(0, $message->getLimit()) as $item) {
             $user[$item] = new User();

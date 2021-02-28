@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-final class GenerateUser
+final class GenerateUserJob
 {
     /**
      * @var int
