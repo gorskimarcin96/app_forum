@@ -58,7 +58,7 @@ class PostComment
      * @ReferenceMany(targetDocument=PostCommentFile::class, mappedBy="postComment")
      * @Groups({"file"})
      */
-    private $postCommentFiles;
+    private $files;
 
     /**
      * PostComment constructor.
@@ -67,7 +67,7 @@ class PostComment
     {
         $this->createdAt = new Timestamp(0, 0);
         $this->updatedAt = new Timestamp(0, 0);
-        $this->postCommentFiles = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     /**
@@ -178,7 +178,7 @@ class PostComment
      */
     public function getFiles(): Collection
     {
-        return $this->postCommentFiles;
+        return $this->files;
     }
 
     /**
@@ -187,8 +187,8 @@ class PostComment
      */
     public function addFile(PostCommentFile $postCommentFile): self
     {
-        if (!$this->postCommentFiles->contains($postCommentFile)) {
-            $this->postCommentFiles[] = $postCommentFile;
+        if (!$this->files->contains($postCommentFile)) {
+            $this->files[] = $postCommentFile;
             $postCommentFile->setPostComment($this);
         }
 
@@ -201,7 +201,7 @@ class PostComment
      */
     public function removeFile(PostCommentFile $postCommentFile): self
     {
-        if ($this->postCommentFiles->removeElement($postCommentFile) && $postCommentFile->getPostComment() === $this) {
+        if ($this->files->removeElement($postCommentFile) && $postCommentFile->getPostComment() === $this) {
             $postCommentFile->setPostComment(null);
         }
 

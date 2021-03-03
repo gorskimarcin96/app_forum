@@ -43,7 +43,7 @@ export default {
       actions.fetchPost(window.location.pathname.split("/")[2]).then(() => {
         let post = getters.post();
         post.images = [];
-        for (const images of post.postFiles) {
+        for (const images of post.files) {
           post.images.push(images.path);
         }
 
@@ -56,7 +56,7 @@ export default {
         let postComments = getters.postComments();
         for (const postComment of postComments) {
           postComment.images = [];
-          for (const images of postComment.postCommentFiles) {
+          for (const images of postComment.files) {
             postComment.images.push(images.path);
           }
         }
@@ -72,7 +72,7 @@ export default {
     },
     pushPostComment(postComment){
       postComment.images = [];
-      for (const images of postComment.postCommentFiles) {
+      for (const images of postComment.files) {
         postComment.images.push(images.path);
       }
       this.postComments = [].concat(this.postComments, [postComment]);

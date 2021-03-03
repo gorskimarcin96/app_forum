@@ -19,7 +19,7 @@
         </a>
       </div>
       <div class="col-md-10 col-8 text-justify">
-        {{ post.description }}
+        <div v-html="post.description"></div>
         <lightbox :items="post.images"
                   v-bind:cells="post.images.length>=4?4:post.images.length"></lightbox>
       </div>

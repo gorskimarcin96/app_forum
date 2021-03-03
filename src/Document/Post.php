@@ -68,7 +68,7 @@ class Post
      * @ReferenceMany(targetDocument=PostFile::class, mappedBy="post")
      * @Groups({"file"})
      */
-    private $postFiles;
+    private $files;
 
     /**
      * @ReferenceMany(targetDocument=PostComment::class, mappedBy="post")
@@ -83,7 +83,7 @@ class Post
         $this->createdAt = new Timestamp(0, 0);
         $this->updatedAt = new Timestamp(0, 0);
         $this->tag = new ArrayCollection();
-        $this->postFiles = new ArrayCollection();
+        $this->files = new ArrayCollection();
         $this->postComments = new ArrayCollection();
     }
 
@@ -246,7 +246,7 @@ class Post
      */
     public function getFiles(): Collection
     {
-        return $this->postFiles;
+        return $this->files;
     }
 
     /**
@@ -255,8 +255,8 @@ class Post
      */
     public function addFile(PostFile $postFile): self
     {
-        if (!$this->postFiles->contains($postFile)) {
-            $this->postFiles[] = $postFile;
+        if (!$this->files->contains($postFile)) {
+            $this->files[] = $postFile;
             $postFile->setPost($this);
         }
 
@@ -269,7 +269,7 @@ class Post
      */
     public function removeFile(PostFile $postFile): self
     {
-        if ($this->postFiles->removeElement($postFile) && $postFile->getPost() === $this) {
+        if ($this->files->removeElement($postFile) && $postFile->getPost() === $this) {
             $postFile->setPost(null);
         }
 

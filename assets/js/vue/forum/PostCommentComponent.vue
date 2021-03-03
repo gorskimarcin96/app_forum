@@ -10,7 +10,7 @@
       </div>
       <div class="col-md-10 col-8 text-justify">
         <div class="text-right">{{ postComment.formatCreatedAt }}</div>
-        {{ postComment.description }}
+        <div v-html="postComment.description"></div>
         <lightbox :items="postComment.images" v-if="postComment.images && postComment.images.length"
                   v-bind:cells="postComment.images.length>=4?4:postComment.images.length"></lightbox>
       </div>

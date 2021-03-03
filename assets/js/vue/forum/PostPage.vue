@@ -29,7 +29,7 @@ export default {
         let posts = getters.posts();
         for (let i = 0; i < posts.length; i++) {
           posts[i].images = [];
-          for (const images of posts[i].postFiles) {
+          for (const images of posts[i].files) {
             posts[i].images.push(images.path);
           }
         }
