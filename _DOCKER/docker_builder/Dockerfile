@@ -12,7 +12,7 @@ RUN pecl install mongodb && docker-php-ext-enable mongodb
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Install redis
-RUN pecl install redis-4.0.1
+RUN pecl install redis-5.1.1
 RUN docker-php-ext-enable redis
 
 # Install gd

@@ -179,7 +179,7 @@ final class GeneratePostJobHandler implements MessageHandlerInterface
         $post->setDescription($this->lipsum->paragraphs(random_int(1, 7), 'p'));
         $post->setUser($this->user[random_int(0, $this->countUser - 1)]);
         foreach (range(0, 7) as $tag) {
-            $post->addTag($this->tag[$this->countTag - 1]);
+            $post->addTag($this->post[random_int(0, $this->countTag - 1)]);
         }
 
         return $post;
