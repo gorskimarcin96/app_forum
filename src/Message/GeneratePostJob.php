@@ -4,23 +4,13 @@ namespace App\Message;
 
 final class GeneratePostJob
 {
-    /**
-     * @var int
-     */
-    private $limit;
+    private int $limit;
 
-    /**
-     * GeneratePostJob constructor.
-     * @param int $limit
-     */
-    public function __construct(int $limit = 1000)
+    public function __construct(int $limit = 100)
     {
         $this->limit = $limit;
     }
 
-    /**
-     * @return int
-     */
     public function getLimit(): int
     {
         return $this->limit;

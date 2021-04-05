@@ -18,4 +18,9 @@ class UserRepository extends ServiceDocumentRepository
     {
         parent::__construct($registry, User::class);
     }
+
+    public function count(): int
+    {
+        return $this->createQueryBuilder()->count()->getQuery()->execute();
+    }
 }

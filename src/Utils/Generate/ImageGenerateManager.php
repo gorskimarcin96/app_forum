@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Utils;
+namespace App\Utils\Generate;
 
 
 use Exception;

@@ -4,16 +4,13 @@ namespace App\Message;
 
 final class GenerateUserJob
 {
-    /**
-     * @var int
-     */
-    private $limit;
+    private int $limit;
 
     /**
      * GenerateUser constructor.
      * @param int $limit
      */
-    public function __construct($limit = 1000)
+    public function __construct($limit = 100)
     {
         $this->limit = $limit;
     }
