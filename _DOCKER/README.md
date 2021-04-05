@@ -1,9 +1,12 @@
 # RUN PROJECT
 1. Put your project to /app.
 2. Run command: `sudo sh run.sh`.
-3. [localhost:8001](http://localhost:8001) - this is your app.
-3. [localhost:8002](http://localhost:8002) - this is your phpMyAdmin.
-3. [localhost:8003](http://localhost:8003) - this is your mongo-express.
+
+3. Public services:
+- [localhost:8001](http://localhost:8001) - this is your app.
+- [localhost:8002](http://localhost:8002) - this is your phpMyAdmin.
+- [localhost:8003](http://localhost:8003) - this is your mongo-express.
+- [localhost:15672](http://localhost:15672) - this is your rabbitmqadmin
 
 ## CONFING XDEBUG ON PHPSTORM
 ### 1. Listen [Megadeth](https://www.youtube.com/watch?v=3qzBGYG786Y&list=PLxzSZG7g8c8wkI0oLUmZTcPMB_ej6Kknk)! :guitar::metal::fire:

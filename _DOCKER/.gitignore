@@ -11,6 +11,10 @@
 !/logs/apache2/.gitkeep
 !/logs/mysql/.gitkeep
 !/logs/mongodb/.gitkeep
+!/logs/rabbitmq/.gitkeep
+!/logs/queue_listener/.gitkeep
 
 !/mysql/.gitkeep
 !/mongodb/.gitkeep
+!/redis/.gitkeep
+!/rabbitmq/.gitkeep
