@@ -3,10 +3,9 @@
 namespace App\Repository;
 
 use App\Document\Tag;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 use MongoDB\DeleteResult;
 use MongoDB\InsertOneResult;
 use MongoDB\UpdateResult;
@@ -17,7 +16,7 @@ use MongoDB\UpdateResult;
  * @method Tag[]    findAll()
  * @method Tag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TagRepository extends ServiceDocumentRepository
+class TagRepository extends DefaultRepository
 {
     /**
      * TagRepository constructor.

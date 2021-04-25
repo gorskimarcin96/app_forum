@@ -2,20 +2,19 @@
 
 namespace App\Repository;
 
-use App\Document\File;
+use App\Document\PostCommentFile;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 
 /**
- * @method File|null find($id, $lockMode = null, $lockVersion = null)
- * @method File|null findOneBy(array $criteria, array $orderBy = null)
- * @method File[]    findAll()
- * @method File[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PostCommentFile|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PostCommentFile|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PostCommentFile[]    findAll()
+ * @method PostCommentFile[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostCommentFileRepository extends ServiceDocumentRepository
+class PostCommentFileRepository extends DefaultRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, File::class);
+        parent::__construct($registry, PostCommentFile::class);
     }
 }

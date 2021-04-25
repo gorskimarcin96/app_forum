@@ -4,9 +4,8 @@ namespace App\Repository;
 
 use App\Document\Post;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 
-class PostRepository extends ServiceDocumentRepository
+class PostRepository extends DefaultRepository
 {
     public const ORDER_BY_TYPES = [
         'latest', 'popular', //'solved', 'unsolved', 'no replies yet'

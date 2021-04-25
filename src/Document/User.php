@@ -5,6 +5,7 @@ namespace App\Document;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Index;
@@ -12,7 +13,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -33,7 +33,6 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Index(unique=true, order="asc")
-
      */
     private $email;
 
@@ -60,11 +59,17 @@ class User implements UserInterface
     private $posts;
 
     /**
+     * @ReferenceMany(targetDocument=PostComment::class, mappedBy="user")
+     */
+    private $postComments;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->postComments = new ArrayCollection();
     }
 
     /**
@@ -209,6 +214,41 @@ class User implements UserInterface
     {
         if ($this->posts->removeElement($post) && $post->getUser() === $this) {
             $post->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PostComment[]
+     */
+    public function getPostComments(): Collection
+    {
+        return $this->postComments;
+    }
+
+    /**
+     * @param PostComment $postComment
+     * @return $this
+     */
+    public function addPostComment(PostComment $postComment): self
+    {
+        if (!$this->posts->contains($postComment)) {
+            $this->postComments[] = $postComment;
+            $postComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param PostComment $postComment
+     * @return $this
+     */
+    public function removePostComment(PostComment $postComment): self
+    {
+        if ($this->posts->removeElement($postComment) && $postComment->getUser() === $this) {
+            $postComment->setUser(null);
         }
 
         return $this;

@@ -8,6 +8,5 @@ docker network prune -f #remove all unused networks
 docker-compose up -d #running your containers
 iptables -A INPUT -p tcp -d 0/0 -s 0/0 --dport 9003 -j ACCEPT #fixing ports for your containers
 docker exec -it forum-app php c:c #run command in your container
-sleep 30
-docker exec -it forum-app php bin/console generate-data
+sleep 2
 docker ps #show docker containers

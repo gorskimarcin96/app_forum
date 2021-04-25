@@ -44,7 +44,7 @@ class Post
     private $numberEntries = 0;
 
     /**
-     * @ReferenceOne(targetDocument=User::class)
+     * @ReferenceOne(targetDocument=User::class, inversedBy="posts")
      * @Groups({"user"})
      */
     private $user;
@@ -172,9 +172,9 @@ class Post
     }
 
     /**
-     * @return Timestamp|null
+     * @return Timestamp
      */
-    public function getCreatedAt(): ?Timestamp
+    public function getCreatedAt(): Timestamp
     {
         return $this->createdAt;
     }
@@ -317,7 +317,7 @@ class Post
      */
     public function getArrayTag(): array
     {
-        foreach ($this->tag->toArray() as $key => $tag) {
+        foreach ($this->tag->toArray() as $tag) {
             $data[] = [
                 'id' => $tag->getId(),
                 'name' => $tag->getName()

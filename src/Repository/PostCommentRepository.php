@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Document\Post;
 use App\Document\PostComment;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use MongoDB\DeleteResult;
@@ -18,7 +17,7 @@ use MongoDB\UpdateResult;
  * @method PostComment[]    findAll()
  * @method PostComment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostCommentRepository extends ServiceDocumentRepository
+class PostCommentRepository extends DefaultRepository
 {
     /**
      * PostCommentRepository constructor.

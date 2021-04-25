@@ -25,7 +25,7 @@ class GenerateDataMessageCommand extends Command
         foreach (range(1, 10) as $i) {
             $this->messageBus->dispatch(new GenerateUserJob(100));
         }
-        foreach (range(1, 10000) as $i) {
+        foreach (range(1, 1000) as $i) {
             $this->messageBus->dispatch(new GeneratePostJob(100));
         }
 

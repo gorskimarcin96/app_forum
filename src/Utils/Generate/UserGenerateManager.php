@@ -8,7 +8,7 @@ use App\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserGenerateManager
+class UserGenerateManager implements GenerateManager
 {
     private DocumentManager $documentManager;
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -21,13 +21,17 @@ class UserGenerateManager
 
     public function generate(int $quantity): void
     {
-        foreach (range(1, $quantity) as $item) {
-            $user[$item] = new User();
-            $user[$item]->setPassword($this->passwordEncoder->encodePassword($user[$item], 'password'));
-            $user[$item]->setIsVerified(true);
-            $this->documentManager->persist($user[$item]);
-            $user[$item]->setEmail($user[$item]->getId() . '@test.pl');
-            $this->documentManager->persist($user[$item]);
+        if ($quantity <= 0) {
+            return;
+        }
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $user[$i] = new User();
+            $user[$i]->setPassword($this->passwordEncoder->encodePassword($user[$i], 'password'));
+            $user[$i]->setIsVerified(true);
+            $this->documentManager->persist($user[$i]);
+            $user[$i]->setEmail($user[$i]->getId() . '@test.pl');
+            $this->documentManager->persist($user[$i]);
         }
         $this->documentManager->flush();
     }

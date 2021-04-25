@@ -4,38 +4,20 @@ namespace App\Utils;
 
 use App\Document\File;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileDataManager
 {
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-    /**
-     * @var string
-     */
-    private $rootDir;
+    private DocumentManager $documentManager;
+    private string $rootDir;
 
-    /**
-     * FileDataManager constructor.
-     * @param DocumentManager $documentManager
-     * @param ParameterBagInterface|null $params
-     */
     public function __construct(DocumentManager $documentManager, ParameterBagInterface $params = null)
     {
-        $this->dm = $documentManager;
+        $this->documentManager = $documentManager;
         $this->rootDir = $params ? ($params->get('kernel.project_dir') . File::ROOT_UPLOAD_DIR) : '';
     }
 
-    /**
-     * @param UploadedFile $uploadedFile
-     * @param $type
-     * @return File
-     * @throws MongoDBException
-     */
     public function upload(UploadedFile $uploadedFile, $type): File
     {
         /** @var File $file */
@@ -43,8 +25,8 @@ class FileDataManager
         $file->setName($uploadedFile->getClientOriginalName());
         $file->setExtension($uploadedFile->getClientOriginalExtension());
 
-        $this->dm->persist($file);
-        $this->dm->flush();
+        $this->documentManager->persist($file);
+        $this->documentManager->flush();
 
         $uploadedFile->move($this->rootDir, $file->getHash() . '.' . $uploadedFile->getClientOriginalExtension());
 
