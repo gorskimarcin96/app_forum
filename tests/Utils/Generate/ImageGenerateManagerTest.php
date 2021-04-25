@@ -10,6 +10,21 @@ class ImageGenerateManagerTest extends KernelTestCase
     private string $filePath;
     private ImageGenerateManager $igm;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->filePath = __dir__ . '/test_image.png';
+        $this->igm = new ImageGenerateManager();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        if (file_exists($this->filePath)) {
+            unlink($this->filePath);
+        }
+    }
+
     public function testMakeRandImage50x25(): void
     {
         $this->igm->makeRandImage(50, 25, $this->filePath);
@@ -35,18 +50,5 @@ class ImageGenerateManagerTest extends KernelTestCase
         $size = getimagesize($this->filePath);
         self::assertEquals(5000, $size[0]);
         self::assertEquals(2500, $size[1]);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->filePath = __dir__ . '/test_image.png';
-        $this->igm = new ImageGenerateManager();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        unlink($this->filePath);
     }
 }

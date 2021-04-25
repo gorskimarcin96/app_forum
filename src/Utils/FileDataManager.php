@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class FileDataManager
+class FileDataManager implements InterfaceFileDataManager
 {
     private DocumentManager $documentManager;
     private string $rootDir;
