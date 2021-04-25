@@ -4,20 +4,12 @@
 namespace App\Utils\Generate;
 
 
-use Exception;
-
-class ImageGenerateManager
+class ImageGenerateManager implements InterfaceImageGenerateManager
 {
-    /**
-     * @param int $width
-     * @param int $height
-     * @param false $filePath
-     * @throws Exception
-     */
-    public function makeRandImage($width = 800, $height = 600, $filePath = false): void
+    public function makeRandImage(int $width = 800, int $height = 600, string $filePath = null): void
     {
         $img = imagecreatetruecolor($width, $height);
-        $this->imageGrenadier($img, 0, 0, $width, $height, $this->randColor(), $this->randColor());
+        $this->imageGrenadier($img, $width, $height, $this->randColor(), $this->randColor());
 
         if ($filePath) {
             imagepng($img, $filePath);
@@ -27,29 +19,15 @@ class ImageGenerateManager
         }
     }
 
-    /**
-     * @return string
-     * @throws Exception
-     */
     private function randColor(): string
     {
         return sprintf('%06X', random_int(0, 0xFFFFFF));
     }
 
-    /**
-     * @param $img
-     * @param $x
-     * @param $y
-     * @param $x1
-     * @param $y1
-     * @param $start
-     * @param $end
-     * @return bool
-     */
-    private function imageGrenadier($img, $x, $y, $x1, $y1, $start, $end): bool
+    private function imageGrenadier($img, int $x, int $y, string $start, string $end): void
     {
-        if ($x > $x1 || $y > $y1) {
-            return false;
+        if (0 > $x || 0 > $y) {
+            return;
         }
 
         $s = [
@@ -64,16 +42,15 @@ class ImageGenerateManager
             hexdec(substr($end, 4, 2))
         ];
         shuffle($e);
-        $steps = $y1 - $y;
+        $steps = $y - 0;
 
         for ($i = 0; $i < $steps; $i++) {
             $r = $s[0] - ((($s[0] - $e[0]) / $steps) * $i);
             $g = $s[1] - ((($s[1] - $e[1]) / $steps) * $i);
             $b = $s[2] - ((($s[2] - $e[2]) / $steps) * $i);
             $color = imagecolorallocate($img, $r, $g, $b);
-            imagefilledrectangle($img, $x, $y + $i, $x1, $y + $i + 1, $color);
+            imagefilledrectangle($img, 0, 0 + $i, $x, 0 + $i + 1, $color);
         }
 
-        return true;
     }
 }
