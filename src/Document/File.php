@@ -2,7 +2,8 @@
 
 namespace App\Document;
 
-use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\DiscriminatorField;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\DiscriminatorMap;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
@@ -10,9 +11,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Index;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\InheritanceType;
-use Doctrine\ODM\MongoDB\Mapping\Annotations\PostPersist;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
  * @Document
@@ -121,12 +120,12 @@ abstract class File
     }
 
     /**
-     * @PostPersist
-     * @param LifecycleEventArgs $args
+     * @MongoDB\PreFlush()
+     * @param PreFlushEventArgs $args
      */
-    public function postPersist(LifecycleEventArgs $args): void
+    public function autoSetHash(PreFlushEventArgs $args): void
     {
-        $this->setHash(hash('md5', 'file_' . $args->getObject()->getId()));
+        $this->setHash(hash('md5', 'file_' . $this->getId()));
 
         $em = $args->getDocumentManager();
         $em->persist($this);

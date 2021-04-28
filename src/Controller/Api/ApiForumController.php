@@ -5,17 +5,15 @@ namespace App\Controller\Api;
 use App\Document\Post;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
+use App\Utils\EncodeJson;
 use App\Utils\ForumDataManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\LockException;
-use Doctrine\ODM\MongoDB\Mapping\MappingException;
-use Doctrine\ODM\MongoDB\MongoDBException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -23,38 +21,33 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ApiForumController extends AbstractController
 {
+    use EncodeJson;
+
     public const DEFAULT_LIMIT = 10;
 
     /**
      * @Route("/post/add", name="post_add", methods={"POST"})
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param ForumDataManager $manager
-     * @return JsonResponse
-     * @throws ExceptionInterface
-     * @throws MongoDBException
      */
-     public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
+    public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
     {
-        $post = $manager->postCreate(
-            json_decode($request->get('post'), true),
-            $this->getUser(),
-            explode(',', $request->get('tags')),
-            $request->files->get('files')
-        );
-        $json = $serializer->serialize($post, 'json', ['groups' => ['post', 'user', 'file']]);
+        try {
+            $data = $this->encodeJson($request->get('data'));
+            $post = $manager->postCreate(
+                $data['post'] ?? [],
+                $this->getUser(),
+                $data['tags'] ?? [],
+                $request->files->get('files')
+            );
+            $json = $serializer->serialize($post, 'json', ['groups' => ['post', 'user', 'file']]);
 
-        return new JsonResponse($json, Response::HTTP_OK, [], true);
+            return new JsonResponse($json, Response::HTTP_CREATED, [], true);
+        } catch (Exception $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     /**
      * @Route("/post-comment/add", name="post_comment_add", methods={"POST"})
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param ForumDataManager $manager
-     * @return JsonResponse
-     * @throws ExceptionInterface
-     * @throws MongoDBException
      */
     public function postCommentAdd(
         Request $request,
@@ -62,22 +55,23 @@ class ApiForumController extends AbstractController
         ForumDataManager $manager
     ): JsonResponse
     {
-        $postComment = $manager->postCommentCreate(
-            json_decode($request->get('postComment'), true),
-            $this->getUser(),
-            $request->files->get('files')
-        );
-        $json = $serializer->serialize($postComment, 'json', ['groups' => ['post_comment', 'user', 'file']]);
+        try {
+            $data = $this->encodeJson($request->get('data'));
+            $postComment = $manager->postCommentCreate(
+                $data['postComment'] ?? [],
+                $this->getUser(),
+                $request->files->get('files')
+            );
+            $json = $serializer->serialize($postComment, 'json', ['groups' => ['post_comment', 'user', 'file', 'post']]);
 
-        return new JsonResponse($json, Response::HTTP_CREATED, [], true);
+            return new JsonResponse($json, Response::HTTP_CREATED, [], true);
+        } catch (Exception $exception) {
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     /**
      * @Route("/post/id/{post}", name="post", methods={"GET"})
-     * @param string $post
-     * @param DocumentManager $documentManager
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
      */
     public function post(string $post, DocumentManager $documentManager, SerializerInterface $serializer): JsonResponse
     {
@@ -97,11 +91,6 @@ class ApiForumController extends AbstractController
 
     /**
      * @Route("/post/get/{page}", name="post_get", methods={"GET"}, defaults={"page"=1})
-     * @param int $page
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param PostRepository $postRepository
-     * @return JsonResponse
      */
     public function postGet(
         int $page,
@@ -122,16 +111,6 @@ class ApiForumController extends AbstractController
 
     /**
      * @Route("/post-comment/get/{post}/{page}", name="post_comment_get", methods={"GET"}, defaults={"page"=1})
-     * @param string $post
-     * @param int $page
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param PostCommentRepository $postCommentRepository
-     * @param PostRepository $postRepository
-     * @return JsonResponse
-     * @throws LockException
-     * @throws MappingException
-     * @throws MongoDBException
      */
     public function postCommentGet(
         string $post,

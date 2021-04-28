@@ -5,7 +5,7 @@ RUN apt-get -y install openssl libssl-dev \
     && docker-php-ext-install mysqli pdo pdo_mysql
 
 # Install composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install xDebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug

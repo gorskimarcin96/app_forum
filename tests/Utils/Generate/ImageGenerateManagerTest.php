@@ -43,12 +43,12 @@ class ImageGenerateManagerTest extends KernelTestCase
         self::assertEquals(250, $size[1]);
     }
 
-    public function testMakeRandImage5000x2500(): void
+    public function testMakeRandImage2500x2500(): void
     {
-        $this->igm->makeRandImage(5000, 2500, $this->filePath);
+        $this->igm->makeRandImage(2500, 2500, $this->filePath);
 
         $size = getimagesize($this->filePath);
-        self::assertEquals(5000, $size[0]);
+        self::assertEquals(2500, $size[0]);
         self::assertEquals(2500, $size[1]);
     }
 }

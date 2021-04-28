@@ -32,7 +32,7 @@ class TagRepository extends DefaultRepository
      * @return Tag|array|Iterator|int|DeleteResult|InsertOneResult|UpdateResult|object
      * @throws MongoDBException
      */
-    public function findOrCreate(string $name)
+    public function firstOrCreate(string $name)
     {
         $tag = $this->createQueryBuilder()
             ->field('name')->equals($name)

@@ -9,36 +9,16 @@ use App\Document\PostFile;
 use App\Document\User;
 use App\Repository\TagRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Exception;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ForumDataManager
+class ForumDataManager implements InterfaceForumDataManager
 {
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-    /**
-     * @var FileDataManager
-     */
-    private $fileDataManager;
-    /**
-     * @var TagRepository
-     */
-    private $tagR;
+    private DocumentManager $dm;
+    private SerializerInterface $serializer;
+    private FileDataManager $fileDataManager;
+    private TagRepository $tagR;
 
-    /**
-     * ForumDataManager constructor.
-     * @param DocumentManager $documentManager
-     * @param SerializerInterface $serializer
-     * @param FileDataManager $fileDataManager
-     * @param TagRepository $tagRepository
-     */
     public function __construct(
         DocumentManager $documentManager,
         SerializerInterface $serializer,
@@ -52,26 +32,17 @@ class ForumDataManager
         $this->tagR = $tagRepository;
     }
 
-    /**
-     * @param array $post
-     * @param User $user
-     * @param array $tags
-     * @param array $files
-     * @return Post
-     * @throws ExceptionInterface
-     * @throws MongoDBException
-     */
     public function postCreate(array $post, User $user, $tags = [], $files = []): Post
     {
         /** @var Post $post */
         $post = $this->serializer->denormalize($post, Post::class);
         $post->setUser($user);
         foreach ($tags as $tag) {
-            $post->addTag($this->tagR->findOrCreate($tag));
+            $post->addTag($this->tagR->firstOrCreate($tag));
         }
 
         $this->dm->persist($post);
-        if($files) {
+        if ($files) {
             foreach ($files as $file) {
                 $postFile = $this->fileDataManager->upload($file, PostFile::class);
                 $post->addFile($postFile);
@@ -83,19 +54,13 @@ class ForumDataManager
         return $post;
     }
 
-    /**
-     * @param array $postComment
-     * @param User $user
-     * @param array $files
-     * @return PostComment
-     * @throws ExceptionInterface
-     * @throws MongoDBException
-     */
     public function postCommentCreate(array $postComment, User $user, $files = []): PostComment
     {
+        $this->checkPostIsEmpty($postComment);
         $post = $this->dm->getRepository(Post::class)->find($postComment['post']);
 
         /** @var PostComment $postComment */
+        unset($postComment['post']);
         $postComment = $this->serializer->denormalize($postComment, PostComment::class);
         $postComment->setUser($user);
         $postComment->setPost($post);
@@ -111,5 +76,12 @@ class ForumDataManager
         $this->dm->flush();
 
         return $postComment;
+    }
+
+    private function checkPostIsEmpty(array $postComment): void
+    {
+        if (!isset($postComment['post']) || !$postComment['post']) {
+            throw new Exception('Post id is empty.');
+        }
     }
 }

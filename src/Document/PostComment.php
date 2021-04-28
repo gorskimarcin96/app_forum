@@ -8,19 +8,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Id;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceOne;
-use Doctrine\ORM\Mapping as ORM;
 use MongoDB\BSON\Timestamp;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Document(repositoryClass=PostCommentRepository::class)
+ * @HasLifecycleCallbacks
  */
 class PostComment
 {
+    use Validator;
     /**
      * @Id
      * @Groups({"post_comment"})
@@ -29,17 +31,20 @@ class PostComment
 
     /**
      * @Field(type="string")
+     * @Assert\NotBlank(message="The description cannot be empty.")
+     * @Assert\Length(min=10, minMessage="Description must be at least {{ limit }} characters long.")
      * @Groups({"post_comment"})
      */
     private $description;
 
     /**
-     * @ReferenceOne(targetDocument=Post::class, inversedBy="postComments")
+     * @Groups({"post_comment"})
+     * @ReferenceOne(targetDocument=Post::class, cascade={"persist"})
      */
     private $post;
 
     /**
-     * @ReferenceOne(targetDocument=User::class, inversedBy="postComments")
+     * @ReferenceOne(targetDocument=User::class, cascade={"persist"})
      * @Groups({"user"})
      */
     private $user;

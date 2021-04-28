@@ -8,46 +8,57 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Field;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Id;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceOne;
 use MongoDB\BSON\Timestamp;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Document(repositoryClass=PostRepository::class)
+ * @HasLifecycleCallbacks
  */
 class Post
 {
+    use Validator;
+
     /**
      * @Id
      * @Groups({"post"})
      */
-    private $id;
+    private string $id;
 
     /**
      * @Field(type="string")
+     * @Assert\NotBlank(message="The title cannot be empty.")
+     * @Assert\Length(min=5, minMessage="Title must be at least {{ limit }} characters long.")
      * @Groups({"post"})
      */
-    private $title;
+    private string $title;
 
     /**
      * @Field(type="string")
+     * @Assert\NotBlank(message="The description cannot be empty.")
+     * @Assert\Length(min=10, minMessage="Description must be at least {{ limit }} characters long.")
+     * @Assert\NotBlank()
      * @Groups({"post"})
      */
-    private $description;
+    private string $description;
 
     /**
      * @Field(type="int")
      * @Groups({"post"})
      */
-    private $numberEntries = 0;
+    private int $numberEntries = 0;
 
     /**
-     * @ReferenceOne(targetDocument=User::class, inversedBy="posts")
+     * @ReferenceOne(targetDocument=User::class, cascade={"persist"})
+     * @Assert\NotBlank(message="The user cannot be empty.")
      * @Groups({"user"})
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @ReferenceMany(targetDocument=Tag::class)
@@ -57,12 +68,12 @@ class Post
     /**
      * @Field(type="timestamp")
      */
-    private $createdAt;
+    private Timestamp $createdAt;
 
     /**
      * @Field(type="timestamp")
      */
-    private $updatedAt;
+    private Timestamp $updatedAt;
 
     /**
      * @ReferenceMany(targetDocument=PostFile::class, mappedBy="post")
