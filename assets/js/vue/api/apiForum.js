@@ -52,17 +52,16 @@ export const actions = {
     },
     sendPost(post, tags, files) {
         let formData = new FormData();
-        formData.append('post', JSON.stringify(post));
-        formData.append('tags', tags);
+        formData.append('data', JSON.stringify({post: post, tags: tags}));
         for (let i = 0; i < files.length; i++) {
             formData.append("files[" + i + "]", files[i]);
         }
 
         axios.post(Routing.generate('api_forum_post_add'), formData).then();
     },
-    sendPostComment(postComment, files){
+    sendPostComment(postComment, files) {
         let formData = new FormData();
-        formData.append('postComment', JSON.stringify(postComment));
+        formData.append('data', JSON.stringify({postComment: postComment}));
         for (let i = 0; i < files.length; i++) {
             formData.append("files[" + i + "]", files[i]);
         }

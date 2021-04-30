@@ -16,7 +16,7 @@ class MainWebTestCase extends WebTestCase
 {
     protected KernelBrowser $client;
     protected DocumentManager $dm;
-    private string $firewall = 'main';
+    protected string $firewall = 'main';
 
     protected function setUp(): void
     {
@@ -24,7 +24,7 @@ class MainWebTestCase extends WebTestCase
         $this->dm = $this->client->getContainer()->get('doctrine_mongodb.odm.document_manager');
     }
 
-    protected function logIn(User $user = null): void
+    protected function logIn(User $user = null): User
     {
         if (!$user) {
             $user = $this->getUser();
@@ -34,6 +34,7 @@ class MainWebTestCase extends WebTestCase
         $this->setTokenInStorage($token);
         $this->setTokenInCookie($token);
 
+        return $user;
     }
 
     protected function getUser($email = 'test@test'): User
@@ -66,6 +67,11 @@ class MainWebTestCase extends WebTestCase
         $session->save();
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
+    }
+
+    protected function getToken(): string
+    {
+        return $this->client->getContainer()->get('security.token_storage')->getToken();
     }
 
     protected function prepareTestFiles(string $path = __dir__, int $quantity = 1): array

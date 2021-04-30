@@ -3,27 +3,18 @@
 namespace App\Security;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 class EmailVerifier
 {
-    private $verifyEmailHelper;
-    private $mailer;
-    private $documentManager;
+    private VerifyEmailHelperInterface $verifyEmailHelper;
+    private MailerInterface $mailer;
+    private DocumentManager $documentManager;
 
-    /**
-     * EmailVerifier constructor.
-     * @param VerifyEmailHelperInterface $helper
-     * @param MailerInterface $mailer
-     * @param DocumentManager $manager
-     */
     public function __construct(VerifyEmailHelperInterface $helper, MailerInterface $mailer, DocumentManager $manager)
     {
         $this->verifyEmailHelper = $helper;
@@ -31,12 +22,6 @@ class EmailVerifier
         $this->documentManager = $manager;
     }
 
-    /**
-     * @param string $verifyEmailRouteName
-     * @param UserInterface $user
-     * @param TemplatedEmail $email
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
-     */
     public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
@@ -55,12 +40,6 @@ class EmailVerifier
         $this->mailer->send($email);
     }
 
-    /**
-     * @param Request $request
-     * @param UserInterface $user
-     * @throws VerifyEmailExceptionInterface
-     * @throws MongoDBException
-     */
     public function handleEmailConfirmation(Request $request, UserInterface $user): void
     {
         $this->verifyEmailHelper->validateEmailConfirmation($request->getUri(), $user->getId(), $user->getEmail());

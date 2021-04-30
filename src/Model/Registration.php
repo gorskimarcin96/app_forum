@@ -10,29 +10,29 @@ class Registration
     /**
      * @Assert\Type(type="App\Document\User")
      */
-    protected $user;
+    protected User $user;
 
     /**
      * @Assert\NotBlank()
      */
-    protected $termsAccepted;
+    protected bool $termsAccepted;
 
-    public function setUser(User $user)
+    public function setUser(User $user): void
     {
         $this->user = $user;
     }
 
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function getTermsAccepted()
+    public function getTermsAccepted(): bool
     {
         return $this->termsAccepted;
     }
 
-    public function setTermsAccepted($termsAccepted)
+    public function setTermsAccepted($termsAccepted): void
     {
         $this->termsAccepted = (boolean)$termsAccepted;
     }

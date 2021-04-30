@@ -37,7 +37,7 @@ class ApiForumControllerTest extends MainWebTestCase
         $jsonResponse = json_decode($response->getContent());
 
         self::assertEquals(400, $response->getStatusCode());
-        self::assertSame('Data is empty.', $jsonResponse->error);
+        self::assertSame('JSON is not valid.', $jsonResponse->error);
     }
 
     public function testPostAddWithTags(): void
@@ -219,7 +219,7 @@ class ApiForumControllerTest extends MainWebTestCase
         $jsonResponse = json_decode($response->getContent());
 
         self::assertEquals(400, $response->getStatusCode());
-        self::assertSame('Data is empty.', $jsonResponse->error);
+        self::assertSame('JSON is not valid.', $jsonResponse->error);
     }
 
     public function testPostCommentAddWithFiles(): void

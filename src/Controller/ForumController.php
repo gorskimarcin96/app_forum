@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\PostRepository;
-use Doctrine\ODM\MongoDB\LockException;
-use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,11 +22,6 @@ class ForumController extends AbstractController
 
     /**
      * @Route("/post/{post}", name="post", options={"expose"=true})
-     * @param string $post
-     * @param PostRepository $postRepository
-     * @return Response
-     * @throws LockException
-     * @throws MappingException
      */
     public function post(string $post, PostRepository $postRepository): Response
     {

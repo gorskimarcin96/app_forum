@@ -4,15 +4,13 @@ namespace App\Controller;
 
 use App\Form\RegistrationFormType;
 use App\Model\Registration;
-use App\Security\EmailVerifier;
 use App\Security\Authenticator;
+use App\Security\EmailVerifier;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -21,15 +19,8 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    /**
-     * @var EmailVerifier
-     */
-    private $emailVerifier;
+    private EmailVerifier $emailVerifier;
 
-    /**
-     * RegistrationController constructor.
-     * @param EmailVerifier $emailVerifier
-     */
     public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
@@ -37,14 +28,6 @@ class RegistrationController extends AbstractController
 
     /**
      * @Route("/register", name="app_register")
-     * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param GuardAuthenticatorHandler $guardHandler
-     * @param Authenticator $authenticator
-     * @param DocumentManager $documentManager
-     * @return Response
-     * @throws MongoDBException
-     * @throws TransportExceptionInterface
      */
     public function register(
         Request $request,
@@ -54,19 +37,20 @@ class RegistrationController extends AbstractController
         DocumentManager $documentManager
     ): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('forum_index');
+        }
+
         $form = $this->createForm(RegistrationFormType::class, new Registration());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData()->getUser();
-
-            // encode the plain password
             $user->setPassword($passwordEncoder->encodePassword($user, $user->getPassword()));
 
             $documentManager->persist($user);
             $documentManager->flush();
 
-            // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('mgorski.dev@gmail.com', 'mgorski.dev'))
@@ -74,14 +58,8 @@ class RegistrationController extends AbstractController
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
-            // do anything else you need here, like send an email
 
-            return $guardHandler->authenticateUserAndHandleSuccess(
-                $user,
-                $request,
-                $authenticator,
-                'main' // firewall name in security.yaml
-            );
+            return $guardHandler->authenticateUserAndHandleSuccess($user, $request, $authenticator, 'main');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -91,15 +69,11 @@ class RegistrationController extends AbstractController
 
     /**
      * @Route("/verify/email", name="app_verify_email")
-     * @param Request $request
-     * @return Response
-     * @throws MongoDBException
      */
     public function verifyUserEmail(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
         } catch (VerifyEmailExceptionInterface $exception) {
@@ -110,6 +84,6 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('app_register');
+        return $this->redirectToRoute('forum_index');
     }
 }

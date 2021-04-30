@@ -1,6 +1,7 @@
 ###>my
 .idea
 .env
+.env.test
 *.lock
 *-lock.json
 /public/upload

@@ -31,7 +31,7 @@ class ApiForumController extends AbstractController
     public function postAdd(Request $request, SerializerInterface $serializer, ForumDataManager $manager): JsonResponse
     {
         try {
-            $data = $this->encodeJson($request->get('data'));
+            $data = $this->encodeJsonToArray($request->get('data'));
             $post = $manager->postCreate(
                 $data['post'] ?? [],
                 $this->getUser(),
@@ -56,7 +56,7 @@ class ApiForumController extends AbstractController
     ): JsonResponse
     {
         try {
-            $data = $this->encodeJson($request->get('data'));
+            $data = $this->encodeJsonToArray($request->get('data'));
             $postComment = $manager->postCommentCreate(
                 $data['postComment'] ?? [],
                 $this->getUser(),

@@ -24,19 +24,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
+    private DocumentManager $documentManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private CsrfTokenManagerInterface $csrfTokenManager;
+    private UserPasswordEncoderInterface $passwordEncoder;
 
-    private $documentManager;
-    private $urlGenerator;
-    private $csrfTokenManager;
-    private $passwordEncoder;
-
-    /**
-     * Authenticator constructor.
-     * @param DocumentManager $documentManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param CsrfTokenManagerInterface $csrfTokenManager
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     */
     public function __construct(
         DocumentManager $documentManager,
         UrlGeneratorInterface $urlGenerator,
@@ -50,20 +42,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
     public function supports(Request $request): bool
     {
-        return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST');
+        return self::LOGIN_ROUTE === $request->attributes->get('_route') && $request->isMethod('POST');
     }
 
-    /**
-     * @param Request $request
-     * @return array
-     */
     public function getCredentials(Request $request): array
     {
         $credentials = [
@@ -80,11 +63,6 @@ class Authenticator extends AbstractFormLoginAuthenticator
         return $credentials;
     }
 
-    /**
-     * @param mixed $credentials
-     * @param UserProviderInterface $userProvider
-     * @return object|UserInterface|null
-     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
@@ -95,29 +73,17 @@ class Authenticator extends AbstractFormLoginAuthenticator
         $user = $this->documentManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
 
         if (!$user) {
-            // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
         }
 
         return $user;
     }
 
-    /**
-     * @param mixed $credentials
-     * @param UserInterface $user
-     * @return bool
-     */
     public function checkCredentials($credentials, UserInterface $user): bool
     {
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
-    /**
-     * @param Request $request
-     * @param TokenInterface $token
-     * @param string $providerKey
-     * @return RedirectResponse
-     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): RedirectResponse
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
@@ -127,9 +93,6 @@ class Authenticator extends AbstractFormLoginAuthenticator
         return new RedirectResponse($this->urlGenerator->generate('forum_index'));
     }
 
-    /**
-     * @return string
-     */
     protected function getLoginUrl(): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
