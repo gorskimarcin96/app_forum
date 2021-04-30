@@ -9,5 +9,5 @@ docker-compose up -d #running your containers
 iptables -A INPUT -p tcp -d 0/0 -s 0/0 --dport 9003 -j ACCEPT #fixing ports for your containers
 docker exec -it forum-app composer update
 docker exec -it forum-app php bin/console c:c
-docker exec -it forum-app php bin/console doctrine:schema:create
 docker exec -it forum-app php bin/console doctrine:schema:update
+docker exec -it forum-app php bin/console doctrine:mongodb:schema:update

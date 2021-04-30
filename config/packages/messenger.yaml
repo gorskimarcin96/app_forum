@@ -1,7 +1,10 @@
 framework:
     messenger:
+        failure_transport: failed
         transports:
-             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            failed:
+                dsn: 'doctrine://default?queue_name=failed'
         routing:
             App\Message\GenerateUserJob: async
             App\Message\GeneratePostJob: async
