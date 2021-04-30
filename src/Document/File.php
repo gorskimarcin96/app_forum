@@ -2,6 +2,7 @@
 
 namespace App\Document;
 
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\DiscriminatorField;
@@ -129,5 +130,14 @@ abstract class File
 
         $em = $args->getDocumentManager();
         $em->persist($this);
+    }
+
+    /**
+     * @MongoDB\PreRemove()
+     */
+    public function removeFile(LifecycleEventArgs $eventArgs): void
+    {
+        //todo i have to somehow inject root_dir
+        unlink(__dir__ . '/../../public' . $eventArgs->getDocument()->getPath());
     }
 }
