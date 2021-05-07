@@ -48,6 +48,7 @@ export default {
         }
 
         this.post = post;
+        this.listenNewPostComments();
       });
     },
     getPostComment(page = 1) {
@@ -70,7 +71,17 @@ export default {
     getRoutePost(postId) {
       return Routing.generate('forum_post', {post: postId});
     },
-    pushPostComment(postComment){
+    listenNewPostComments() {
+      console.log(1)
+      let url = new URL('http://localhost:9090/.well-known/mercure');
+      url.searchParams.append('topic', '/post-comment/' + this.post.id);
+
+      const eventSource = new EventSource(url);
+      eventSource.onmessage = (event) => {
+        this.pushPostComment(JSON.parse(event.data));
+      }
+    },
+    pushPostComment(postComment) {
       postComment.images = [];
       for (const images of postComment.files) {
         postComment.images.push(images.path);

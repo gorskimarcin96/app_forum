@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -52,7 +54,8 @@ class ApiForumController extends AbstractController
     public function postCommentAdd(
         Request $request,
         SerializerInterface $serializer,
-        ForumDataManager $manager
+        ForumDataManager $manager,
+        PublisherInterface $publisher
     ): JsonResponse
     {
         try {
@@ -63,6 +66,7 @@ class ApiForumController extends AbstractController
                 $request->files->get('files')
             );
             $json = $serializer->serialize($postComment, 'json', ['groups' => ['post_comment', 'user', 'file', 'post']]);
+            $publisher(new Update('/post-comment/' . $postComment->getPost()->getId(), $json));
 
             return new JsonResponse($json, Response::HTTP_CREATED, [], true);
         } catch (Exception $exception) {

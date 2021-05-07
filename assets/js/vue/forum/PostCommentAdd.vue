@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import {actions, getters} from "../api/apiForum";
+import {actions} from "../api/apiForum";
 
 export default {
   data() {
@@ -65,7 +65,6 @@ export default {
     send() {
       if (this.postComment.description) {
         actions.sendPostComment(this.postComment, this.files).then(() => {
-          this.$parent.pushPostComment(getters.post());
           this.postComment = '';
         })
       } else {
