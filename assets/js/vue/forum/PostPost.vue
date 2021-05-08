@@ -72,7 +72,6 @@ export default {
       return Routing.generate('forum_post', {post: postId});
     },
     listenNewPostComments() {
-      console.log(1)
       let url = new URL('http://localhost:9090/.well-known/mercure');
       url.searchParams.append('topic', '/post-comment/' + this.post.id);
 

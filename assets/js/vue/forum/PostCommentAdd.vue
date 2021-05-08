@@ -66,7 +66,9 @@ export default {
       if (this.postComment.description) {
         actions.sendPostComment(this.postComment, this.files).then(() => {
           this.postComment = '';
-        })
+        }).catch(error => {
+          alert(error.response.data.error);
+        });
       } else {
         alert('The description cannot be empty.');
       }

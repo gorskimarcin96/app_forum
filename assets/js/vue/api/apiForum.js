@@ -57,7 +57,7 @@ export const actions = {
             formData.append("files[" + i + "]", files[i]);
         }
 
-        axios.post(Routing.generate('api_forum_post_add'), formData).then();
+        return axios.post(Routing.generate('api_forum_post_add'), formData);
     },
     sendPostComment(postComment, files) {
         let formData = new FormData();

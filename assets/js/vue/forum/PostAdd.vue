@@ -137,8 +137,11 @@ export default {
       this.showImages.splice(index, 1);
     },
     send() {
-      actions.sendPost(this.post, this.tags, this.filesToUpload);
-      $('button.close').click();
+      actions.sendPost(this.post, this.tags, this.filesToUpload).then(() => {
+        $('button.close').click();
+      }).catch(error => {
+        alert(error.response.data.error);
+      });
     }
   }
 }
