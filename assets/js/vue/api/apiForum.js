@@ -33,11 +33,12 @@ export const actions = {
             .get(Routing.generate('api_forum_post', {post: id}))
             .then(response => mutations.setPost(response.data));
     },
-    fetchPosts(type = 'latest') {
-        window.history.pushState(null, null, Routing.generate('forum_index', {type: type}));
+    fetchPosts(phrase = '', type = 'latest', searchEngine = 'elasticsearch') {
+        let data = {phrase: phrase, type: type, searchEngine: searchEngine};
+        window.history.pushState(null, null, Routing.generate('forum_index', data));
 
         return axios
-            .get(Routing.generate('api_forum_post_get', {type: type}))
+            .get(Routing.generate('api_forum_post_get', data))
             .then(response => mutations.setPosts(response.data));
     },
     fetchPostComments(post, page = 1) {

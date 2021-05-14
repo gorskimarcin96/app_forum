@@ -9,6 +9,13 @@
     ] %}
 {% endif %}
 
+{% set urlToServices = [
+    {url:'http://localhost:8002',name:'phpmyadmin'},
+    {url:'http://localhost:8003',name:'mongo express'},
+    {url:'http://localhost:15672',name:'rabbit mq'},
+    {url:'http://localhost:5601',name:'kibana'},
+] %}
+
 <header>
     <nav class="navbar navbar-expand-sm navbar-dark sticky-top">
         <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
@@ -25,7 +32,11 @@
                            href="{{ url(nav.route) }}">{{ nav.name }}</a>
                     </li>
                 {% endfor %}
-                <li></li>
+                {% for service in urlToServices %}
+                    <li class="nav-item">
+                        <a class="nav-link" target="_blank" href="{{ service.url }}">{{ service.name|capitalize }}</a>
+                    </li>
+                {% endfor %}
             </ul>
 
             <div id="timer" class="badge badge-dark d-sm-inline-block d-none">

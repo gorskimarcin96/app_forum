@@ -1,19 +1,21 @@
 <footer class="p-2">
     <div class="container-xl">
         <div class="row">
-            <div class="col-6">
+            <div class="col-lg-4 d-none d-lg-block">
                 <section>
                     {% if email %}
-                        <b>Contact:</b>
+                        <b>Contacat:</b>
                         <div class="pt-3">
                             Address e-mail: <a href="mailto:{{ email }}">{{ email }}</a>
                         </div>
                     {% endif %}
                 </section>
             </div>
-            <div class="col-6">
+            <div class="col-lg-8 col-md-12">
                 <b>Technologies used:</b>
-                <div>
+                <div class="pb-1">
+                    <a class="icon display-5" href="https://www.jetbrains.com/phpstorm/" target="_blank">
+                        {% include 'icons/phpstorm.svg' %}</a>
                     <a class="icon display-5" href="https://docker.com/" target="_blank">
                         <i class="fab fa-docker"></i></a>
                     <a class="icon display-5" href="https://github.com/" target="_blank">
@@ -30,13 +32,32 @@
                         <i class="fab fa-bootstrap"></i></a>
                     <a class="icon display-5" href="https://vuejs.org/" target="_blank">
                         <i class="fab fa-vuejs"></i></a>
+                    <a class="icon display-5" href="https://www.rabbitmq.com/" target="_blank">
+                        {% include 'icons/rabbitmq.svg' %}</a>
+                    <a class="icon display-5" href="https://redis.io/" target="_blank">
+                        {% include 'icons/redis.svg' %}</a>
+                    <a class="icon display-5" href="https://mercure.rocks/" target="_blank">
+                        {% include 'icons/mercure.svg' %}</a>
+                    <a class="icon display-5" href="https://www.elastic.co/" target="_blank">
+                        {% include 'icons/elastic-search.svg' %}</a>
+                    <a class="icon display-5" href="https://www.elastic.co/kibana" target="_blank">
+                        {% include 'icons/kibana.svg' %}</a>
                 </div>
             </div>
-            {% if created_by %}
-                <div class="col-12 text-right border-top border-light small">
-                    Created by: <a href="https://{{ created_by }}">{{ created_by }}</a>.
-                </div>
-            {% endif %}
+            <div class="col-12 border-top border-light small">
+
+                <section class="w-50 float-left d-lg-none">
+                    {% if email %}
+                        Address e-mail: <a href="mailto:{{ email }}">{{ email }}</a>
+                    {% endif %}
+                </section>
+
+                <section class="w-50 float-right text-right">
+                    {% if created_by %}
+                        Created by: <a href="https://{{ created_by }}">{{ created_by }}</a>.
+                    {% endif %}
+                </section>
+            </div>
         </div>
     </div>
 </footer>

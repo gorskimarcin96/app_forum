@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-2 col-4 text-right small">
           <div><i class="fas fa-eye"></i> {{ post.numberEntries }}</div>
-          <div><i class="fas fa-comment-alt"></i> {{ post.countComment }}</div>
+          <div><i class="fas fa-comment-alt"></i> {{ post.countPostComments }}</div>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ export default {
       images: [],
       tag: [],
       numberEntries: 0,
-      countComment: 0
+      countPostComments: 0
     }
   },
   methods: {

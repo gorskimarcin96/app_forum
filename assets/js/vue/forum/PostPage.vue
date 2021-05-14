@@ -14,7 +14,11 @@ export default {
   components: {PostComponent},
   data() {
     return {
-      posts: []
+      posts: [],
+      fetchPostStartTime: 0,
+      fetchPostTime: 0,
+      isSearching: false,
+      intervalSearchPostTime: null
     }
   },
   mounted() {
@@ -24,21 +28,35 @@ export default {
     this.$root.$refs.postPage = this;
   },
   methods: {
-    getPosts(type) {
-      actions.fetchPosts(type).then(() => {
+    getPosts(phrase = '', type = 'latest', searchEngine = 'elasticsearch') {
+      this.isSearching = true;
+      this.fetchPostStartTime = Date.now();
+      this.setIntervalSearchPostTime();
+
+      actions.fetchPosts(phrase, type, searchEngine).then(() => {
         let posts = getters.posts();
         for (let i = 0; i < posts.length; i++) {
           posts[i].images = [];
-          for (const images of posts[i].files) {
-            posts[i].images.push(images.path);
+          if ('files' in posts[i]) {
+            for (const images of posts[i].files) {
+              posts[i].images.push(images.path);
+            }
           }
         }
 
         this.posts = posts;
+        clearInterval(this.intervalSearchPostTime)
+        this.fetchPostTime = Date.now() - this.fetchPostStartTime;
+        this.isSearching = false;
       });
     },
     getRoutePost(postId) {
       return Routing.generate('forum_post', {post: postId});
+    },
+    setIntervalSearchPostTime: function () {
+      this.intervalSearchPostTime = setInterval(function () {
+        this.fetchPostTime = Date.now() - this.fetchPostStartTime;
+      }.bind(this), 25);
     }
   }
 }

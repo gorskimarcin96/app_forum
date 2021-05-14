@@ -26,6 +26,7 @@ $link-hover-color: $white;
   font-size: 2.5rem;
   font-weight: 300;
   line-height: 1.2;
+  display: inline-block;
 }
 
 @import "~bootstrap/scss/bootstrap";
@@ -38,7 +39,7 @@ body {
 }
 
 $maxHeightHeader: 56px;
-$maxHeightFooter: 100px;
+$maxHeightFooter: 110px;
 body > header {
   background: $background;
   min-height: $maxHeightHeader !important;
@@ -100,7 +101,7 @@ svg:hover {
 
 .inner-main-header,
 .inner-sidebar-header {
-  height: 3.5rem;
+  height: 5.5rem;
   border-bottom: 1px solid $secondary;
   display: flex;
   align-items: center;
@@ -117,6 +118,7 @@ svg:hover {
 .inner-sidebar-body {
   padding: 1rem;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   flex: 1 1 auto;
 }
@@ -132,4 +134,22 @@ svg:hover {
 
 .h-250 {
   height: 250px;
+}
+
+//forms
+.dark-form-control {
+  .input-group-text {
+    background-color: $gray-800;
+    color: $white;
+  }
+
+  .form-control {
+    background-color: $gray-400;
+    color: $gray-800;
+  }
+
+  .form-control::placeholder {
+    color: $gray-700;
+    opacity: 0.8;
+  }
 }
