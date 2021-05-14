@@ -7,6 +7,7 @@ use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Utils\EncodeJson;
 use App\Utils\ForumDataManager;
+use App\Utils\PostSearchEngineFactory;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -100,15 +101,17 @@ class ApiForumController extends AbstractController
         int $page,
         Request $request,
         SerializerInterface $serializer,
-        PostRepository $postRepository
+        PostSearchEngineFactory $postSearchFactory
     ): JsonResponse
     {
-        $data = $postRepository->page(
+        $engine = $postSearchFactory->create($request->get('searchEngine', 'elasticsearch'));
+        $data = $engine->page(
             $page,
             $request->get('limit', self::DEFAULT_LIMIT),
-            $request->get('type', PostRepository::ORDER_BY_TYPES[0])
+            $request->get('type', PostRepository::ORDER_BY_TYPES[0]),
+            $request->get('phrase', 'lorem')
         );
-        $json = $serializer->serialize($data, 'json', ['groups' => ['post', 'user', 'file']]);
+        $json = $serializer->serialize($data ?? [], 'json', ['groups' => ['post', 'user', 'file']]);
 
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }

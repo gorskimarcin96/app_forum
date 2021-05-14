@@ -54,6 +54,12 @@ class Post
     private int $numberEntries = 0;
 
     /**
+     * @Field(type="int")
+     * @Groups({"post"})
+     */
+    private int $countPostComments = 0;
+
+    /**
      * @ReferenceOne(targetDocument=User::class, cascade={"persist"})
      * @Assert\NotBlank(message="The user cannot be empty.")
      * @Groups({"user"})
@@ -140,6 +146,25 @@ class Post
     public function setNumberEntries($numberEntries): self
     {
         $this->numberEntries = $numberEntries;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountPostComments(): int
+    {
+        return $this->countPostComments;
+    }
+
+    /**
+     * @param int $countPostComments
+     * @return $this
+     */
+    public function setCountPostComments(int $countPostComments): self
+    {
+        $this->countPostComments = $countPostComments;
 
         return $this;
     }
@@ -345,14 +370,5 @@ class Post
     public function getFormatCreatedAt(): string
     {
         return date(DateManager::DATETIME_FORMAT, $this->getCreatedAt()->getTimestamp());
-    }
-
-    /**
-     * @return int
-     * @Groups({"post"})
-     */
-    public function getCountComment(): int
-    {
-        return $this->getPostComments()->count();
     }
 }

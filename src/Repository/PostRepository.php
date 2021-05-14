@@ -11,22 +11,12 @@ class PostRepository extends DefaultRepository
         'latest', 'popular', //'solved', 'unsolved', 'no replies yet'
     ];
 
-    /**
-     * PostRepository constructor.
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
     }
 
-    /**
-     * @param int $page
-     * @param int $limit
-     * @param string $type
-     * @return int|mixed|string
-     */
-    public function page(int $page, int $limit = 10, string $type = 'latest')
+    public function page(int $page, int $limit = 10, string $type = 'latest', string $phrase = null): array
     {
         $query = $this->createQueryBuilder();
 
@@ -38,6 +28,12 @@ class PostRepository extends DefaultRepository
             default:
                 $query->sort('createdAt', 'DESC');
                 break;
+        }
+
+        if ($phrase) {
+            foreach (['title', 'description'] as $column) {
+                $query->addOr($query->expr()->field($column)->equals(['$regex' => $phrase]));
+            }
         }
 
         return $query

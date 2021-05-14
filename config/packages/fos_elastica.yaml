@@ -1,0 +1,34 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/doc/setup.md
+fos_elastica:
+    clients:
+        default: { url: '%env(ELASTICSEARCH_URL)%' }
+    indexes:
+        app:
+            types:
+                posts:
+                    properties:
+                        title: ~
+                        description: ~
+                        numberEntries: ~
+                        countPostComments: ~
+                        createdAt: ~
+                        user:
+                            type: nested
+                            properties:
+                                id: ~
+                                email: ~
+                        tag:
+                            type: nested
+                            properties:
+                                id: ~
+                                name: ~
+                        files:
+                            type: nested
+                            properties:
+                                id: ~
+                                name: ~
+                                hash: ~
+                                extension: ~
+                    persistence:
+                        driver: mongodb
+                        model: App\Document\Post

@@ -14,4 +14,5 @@ return [
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
     Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle::class => ['all' => true],
     Symfony\Bundle\MercureBundle\MercureBundle::class => ['all' => true],
+    FOS\ElasticaBundle\FOSElasticaBundle::class => ['all' => true],
 ];

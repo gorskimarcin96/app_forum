@@ -22,7 +22,7 @@ class PostGenerateManager implements GenerateManager
     public const USER_NUMBER = 1000;
     public const TAG_NUMBER = 100;
     public const POST_COMMENT_MULTIPLICATION = 10;
-    public const RAND_FILE_NUMBER = 5;
+    public const RAND_FILE_NUMBER = 2;
     public const RAND_TITLE_POST_WORD_FROM = 3;
     public const RAND_TITLE_POST_WORD_TO = 20;
     public const RAND_DESCRIPTION_POST_PARAGRAPHS_FROM = 1;
