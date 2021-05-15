@@ -9,20 +9,25 @@
         {% endfor %}
 
         <h1 class="h3 mb-3 font-weight-normal">Register</h1>
-        {{ form_start(registrationForm) }}
+        <div id="registration_form">
+            {{ form_start(registrationForm) }}
 
-        {{ form_label(registrationForm.user.email,null,{label_attr:{class:'mb-0 mt-2'}}) }}
-        {{ form_widget(registrationForm.user.email,{attr:{class:'form-control'}}) }}
-        {{ form_label(registrationForm.user.password.password,null,{label_attr:{class:'mb-0 mt-2'}}) }}
-        {{ form_widget(registrationForm.user.password.password,{attr:{class:'form-control',placeholder:'Enter your password'}}) }}
-        {{ form_label(registrationForm.user.password.confirm,null,{label_attr:{class:'mb-0 mt-2'}}) }}
-        {{ form_widget(registrationForm.user.password.confirm,{attr:{class:'form-control',placeholder:'Confirm your password'}}) }}
-        {{ form_label(registrationForm.terms,null,{label_attr:{class:'mb-0 mt-2'}}) }}
-        {{ form_widget(registrationForm.terms) }}
-        <div class="text-right">
-            {{ form_row(registrationForm.submit,{attr:{class:'btn btn-primary'},label:'Register'}) }}
+            <div id="registration_form_user">
+                {{ form_label(registrationForm.user.email,null,{label_attr:{class:'mb-0 mt-2'}}) }}
+                {{ form_widget(registrationForm.user.email,{attr:{class:'form-control'}}) }}
+                {{ form_label(registrationForm.user.password.password,null,{label_attr:{class:'mb-0 mt-2'}}) }}
+                {{ form_widget(registrationForm.user.password.password,{attr:{class:'form-control',placeholder:'Enter your password'}}) }}
+                {{ form_label(registrationForm.user.password.confirm,null,{label_attr:{class:'mb-0 mt-2'}}) }}
+                {{ form_widget(registrationForm.user.password.confirm,{attr:{class:'form-control',placeholder:'Confirm your password'}}) }}
+            </div>
+
+            {{ form_label(registrationForm.terms,null,{label_attr:{class:'mb-0 mt-2'}}) }}
+            {{ form_widget(registrationForm.terms) }}
+            <div class="text-right">
+                {{ form_row(registrationForm.submit,{attr:{class:'btn btn-primary'},label:'Register'}) }}
+            </div>
+
+            {{ form_end(registrationForm) }}
         </div>
-
-        {{ form_end(registrationForm) }}
     </div>
 {% endblock %}

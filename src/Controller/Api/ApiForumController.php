@@ -104,12 +104,12 @@ class ApiForumController extends AbstractController
         PostSearchEngineFactory $postSearchFactory
     ): JsonResponse
     {
-        $engine = $postSearchFactory->create($request->get('searchEngine', 'elasticsearch'));
+        $engine = $postSearchFactory->create($request->get('searchEngine', 'database'));
         $data = $engine->page(
             $page,
             $request->get('limit', self::DEFAULT_LIMIT),
             $request->get('type', PostRepository::ORDER_BY_TYPES[0]),
-            $request->get('phrase', 'lorem')
+            $request->get('phrase')
         );
         $json = $serializer->serialize($data ?? [], 'json', ['groups' => ['post', 'user', 'file']]);
 

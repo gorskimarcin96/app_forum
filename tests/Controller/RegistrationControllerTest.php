@@ -16,7 +16,7 @@ class RegistrationControllerTest extends MainWebTestCase
     public function testRegisterSendForm(): void
     {
         $this->client->request('GET', '/register');
-        $this->client->submitForm('Submit', ['registration_form' => [
+        $this->client->submitForm('Register', ['registration_form' => [
             'user' => [
                 'email' => 'marianTo@test.dev',
                 'password' => ['password' => 'iLoveMetal', 'confirm' => 'iLoveMetal'],
