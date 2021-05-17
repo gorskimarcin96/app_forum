@@ -137,6 +137,8 @@ services:
     restart: always
     ports:
       - 127.0.0.1:9200:9200
+    volumes:
+      - ${ELASTICSEARCH_DATA-./elasticsearch/data}:/usr/share/elasticsearch/data
     environment:
       - "discovery.type=single-node"
       - "bootstrap.memory_lock=true"
@@ -163,8 +165,6 @@ services:
       - 127.0.0.1:5601:5601
     environment:
       - "ELASTICSEARCH_URL=http://elasticsearch"
-    depends_on:
-      - elasticsearch
     networks:
       - app-network
 

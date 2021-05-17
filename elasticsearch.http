@@ -1,0 +1,29 @@
+GET http://localhost:9200/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "title": {
+        "query": "integer lorem"
+      },
+      "description": {
+        "query": "integer lorem"
+      }
+    }
+  }
+}
+
+###
+GET http://localhost:9200/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "simple_query_string" : {
+      "query": "integer lorem",
+      "fields": ["title", "description"],
+      "default_operator": "or"
+    }
+  }
+}

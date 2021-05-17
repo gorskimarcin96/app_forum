@@ -9,9 +9,12 @@ fos_elastica:
                     properties:
                         title: ~
                         description: ~
-                        numberEntries: ~
-                        countPostComments: ~
-                        createdAt: ~
+                        numberEntries:
+                            type: integer
+                        countPostComments:
+                            type: integer
+                        createdAt:
+                            fielddata: true
                         user:
                             type: nested
                             properties:

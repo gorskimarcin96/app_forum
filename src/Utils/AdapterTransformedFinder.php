@@ -3,7 +3,9 @@
 
 namespace App\Utils;
 
-
+use App\Repository\PostRepository;
+use Elastica\Query;
+use Elastica\Query\MatchQuery;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 class AdapterTransformedFinder
@@ -17,42 +19,26 @@ class AdapterTransformedFinder
 
     public function page(int $page = 1, int $limit = 10, string $type = 'latest', string $phrase = null): array
     {
-        $data = $this->postFinder->findPaginated($phrase)->setMaxPerPage($limit)->setCurrentPage($page)->jsonSerialize();
+        $query = new Query();
 
-        return $this->sort($type, $data);
-    }
-
-    private function sort(string $type, array $data): array
-    {
         switch ($type) {
-            case 'latest':
-                $data = $this->sortByCreatedAt($data);
+            case PostRepository::ORDER_BY_TYPES[1]:
+                $query->addSort(['numberEntries' => ['order' => 'desc']]);
                 break;
-            case 'popular':
-                $data = $this->sortByNumberEntries($data);
-                break;
+            case PostRepository::ORDER_BY_TYPES[0]:
             default:
-                throw new \Exception("Type: '" . $type . '" is not valid.');
+                $query->addSort(['createdAt' => ['order' => 'desc']]);
+                break;
         }
 
-        return $data;
-    }
+        if ($phrase) {
+            foreach (['title', 'description'] as $column) {
+                $fieldQuery = new MatchQuery();
+                $fieldQuery->setFieldQuery($column, $phrase);
+                $query->setQuery($fieldQuery);
+            }
+        }
 
-    private function sortByCreatedAt($data): array
-    {
-        usort($data, static function ($a, $b) {
-            return $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1;
-        });
-
-        return $data;
-    }
-
-    private function sortByNumberEntries($data): array
-    {
-        usort($data, static function ($a, $b) {
-            return $a->getNumberEntries() > $b->getNumberEntries() ? -1 : 1;
-        });
-
-        return $data;
+        return $this->postFinder->find($query, $limit, ['from' => ($page - 1) * $limit]);
     }
 }
